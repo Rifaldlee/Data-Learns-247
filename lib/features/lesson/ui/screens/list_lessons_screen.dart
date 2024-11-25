@@ -89,7 +89,10 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
                           detailCourseHeading(state.detailCourse),
                           const SizedBox(height: 16),
                           if (state.detailCourse.sections != null)
-                            courseSection(state.detailCourse.sections!),
+                            courseSection(
+                              state.detailCourse.sections!,
+                              state.detailCourse.progress!
+                            ),
                         ],
                       ),
                     )
@@ -205,7 +208,7 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
     );
   }
 
-  Widget courseSection(List<Sections> sections) {
+  Widget courseSection(List<Sections> sections, String progress) {
     return Column(
       children: sections.map((section) {
         return Container(
@@ -233,7 +236,10 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
                     return LessonsItem(
                       lessons: lesson,
                       onTap: () {
-                        context.read<CourseSectionsCubit>().setSections(sections);
+                        context.read<CourseSectionsCubit>().setSections(
+                          sections: sections,
+                          progress: progress,
+                        );
                         context.pushNamed(
                           RouteConstants.lessonScreen,
                           pathParameters: {

@@ -7,8 +7,11 @@ part 'course_sections_state.dart';
 class CourseSectionsCubit extends Cubit<CourseSectionsState> {
   CourseSectionsCubit() : super(CourseSectionsInitial());
 
-  void setSections(List<Sections> sections) {
-    emit(CourseSectionsCompleted(sections));
+  void setSections({
+    required List<Sections> sections,
+    required String progress,
+  }) {
+    emit(CourseSectionsCompleted(sections, progress));
   }
 
   void clearSections() {

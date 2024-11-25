@@ -11,9 +11,10 @@ class CourseSectionsInitial extends CourseSectionsState {}
 
 class CourseSectionsCompleted extends CourseSectionsState {
   final List<Sections> sections;
+  final String progress;
 
-  const CourseSectionsCompleted(this.sections);
+  const CourseSectionsCompleted(this.sections, this.progress);
 
   @override
-  List<Object?> get props => [sections];
+  List<Object?> get props => [sections, progress];
 }

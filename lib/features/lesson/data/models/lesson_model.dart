@@ -3,6 +3,7 @@ class Lesson {
   int? previousLesson;
   int? nextLesson;
   String? lessonType;
+  bool? isComplete;
   String? body;
   int? id;
 
@@ -11,6 +12,7 @@ class Lesson {
     this.previousLesson,
     this.nextLesson,
     this.lessonType,
+    this.isComplete,
     this.body,
     this.id
   });
@@ -20,6 +22,7 @@ class Lesson {
     previousLesson = json['previous_lesson'];
     nextLesson = json['next_lesson'];
     lessonType = json['lesson_type'];
+    isComplete = json['is_complete'];
     body = json['body'];
     id = json['id'];
   }
@@ -30,6 +33,7 @@ class Lesson {
     data['previous_lesson'] = previousLesson;
     data['next_lesson'] = nextLesson;
     data['lesson_type'] = lessonType;
+    data['is_complete'] = isComplete;
     data['body'] = body;
     data['id'] = id;
     return data;

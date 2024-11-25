@@ -16,7 +16,7 @@ class DetailCourseCompleted extends DetailCourseState {
   const DetailCourseCompleted(this.detailCourse);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [detailCourse];
 }
 
 class DetailCourseError extends DetailCourseState {
