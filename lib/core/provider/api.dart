@@ -14,6 +14,7 @@ class API {
   static const listCourses = 'list-courses';
   static const detailCourse = 'course';
   static const enrollCourse = 'courses/enroll';
+  static const myCourses = 'my-courses';
 
   static const lesson = 'lesson';
   static const finishLesson = 'lessons/finish';

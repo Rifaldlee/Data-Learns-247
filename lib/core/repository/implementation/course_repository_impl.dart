@@ -4,6 +4,7 @@ import 'package:data_learns_247/core/provider/network_service.dart';
 import 'package:data_learns_247/core/provider/query_parameter.dart';
 import 'package:data_learns_247/core/repository/course_repository.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
+import 'package:data_learns_247/features/course/data/models/my_courses_list_model.dart';
 import 'package:data_learns_247/features/course/data/response/course_response.dart';
 import 'package:data_learns_247/features/course/data/models/list_courses_model.dart';
 
@@ -21,6 +22,26 @@ class CourseRepositoryImpl implements CourseRepository {
       return NetworkHelper.filterResponse(
         callBack: (json) => (json as List)
           .map((e) => ListCourses.fromJson(e as Map<String, dynamic>))
+          .toList(),
+        response: response
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<MyCoursesList>?>getMyCoursesList() async {
+    try {
+      final response = await NetworkService.sendRequest(
+        requestType: RequestType.get,
+        baseUrl: API.publicBaseAPI,
+        endpoint: API.myCourses,
+        useBearer: true
+      );
+      return NetworkHelper.filterResponse(
+        callBack: (json) => (json as List)
+          .map((e) => MyCoursesList.fromJson(e as Map<String, dynamic>))
           .toList(),
         response: response
       );

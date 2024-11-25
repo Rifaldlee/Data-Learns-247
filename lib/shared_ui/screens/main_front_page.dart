@@ -1,3 +1,4 @@
+import 'package:data_learns_247/features/course/ui/screens/my_courses_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:data_learns_247/core/theme/color.dart';
@@ -33,9 +34,12 @@ class _MainFrontPageState extends State<MainFrontPage> {
       activeTab = const ListCoursesScreen();
     }
     if (_selectedTabIndex == 2) {
-      activeTab = const SearchScreen();
+      activeTab = const MyCoursesListScreen();
     }
     if (_selectedTabIndex == 3) {
+      activeTab = const SearchScreen();
+    }
+    if (_selectedTabIndex == 4) {
       activeTab = const ProfileScreen();
     }
 
@@ -53,6 +57,8 @@ class _MainFrontPageState extends State<MainFrontPage> {
           onTap: _selectTab,
           currentIndex: _selectedTabIndex,
           selectedItemColor: kGreenColor,
+          selectedLabelStyle: const TextStyle(fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontSize: 12),
           items: [
             BottomNavigationBarItem(
               icon: _selectedTabIndex == 0
@@ -68,6 +74,12 @@ class _MainFrontPageState extends State<MainFrontPage> {
             ),
             BottomNavigationBarItem(
               icon: _selectedTabIndex == 2
+                  ? const Icon(Icons.play_circle_fill)
+                  : const Icon(Icons.play_circle_outline),
+              label: 'My Learning',
+            ),
+            BottomNavigationBarItem(
+              icon: _selectedTabIndex == 3
                 ? Container (
                 width: 24,
                 height: 24,
@@ -85,7 +97,7 @@ class _MainFrontPageState extends State<MainFrontPage> {
               label: 'Search',
             ),
             BottomNavigationBarItem(
-              icon: _selectedTabIndex == 3
+              icon: _selectedTabIndex == 4
                   ? const Icon(Icons.person)
                   : const Icon(Icons.person_outline),
               label: 'Profile',

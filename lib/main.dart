@@ -1,3 +1,4 @@
+import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => DetailArticleCubit()),
         BlocProvider(create: (context) => ArticleDetailNavigationCubit()),
         BlocProvider(create: (context) => ListCoursesCubit()),
+        BlocProvider(create: (context) => MyCoursesListCubit()),
         BlocProvider(create: (context) => DetailCourseCubit()),
         BlocProvider(create: (context) => EnrollCourseCubit()),
         BlocProvider(create: (context) => LessonCubit()),
