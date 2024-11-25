@@ -141,6 +141,9 @@ class _LessonScreenState extends State<LessonScreen> {
       children: [
         YoutubePlayer(
           controller: _ytController!,
+          onEnded: (_) {
+            context.read<FinishLessonCubit>().finishLesson(widget.id);
+          },
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
