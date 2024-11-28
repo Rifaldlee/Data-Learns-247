@@ -18,7 +18,7 @@ class CourseResultItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

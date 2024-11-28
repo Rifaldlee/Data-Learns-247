@@ -1,3 +1,5 @@
+import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +10,6 @@ import 'package:html/parser.dart';
 import 'package:go_router/go_router.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
-import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/core/tools/html_parser.dart';
 import 'package:data_learns_247/core/tools/pdf_extractor.dart';
 import 'package:data_learns_247/core/tools/youtube_extractor.dart';
@@ -67,7 +68,6 @@ class _LessonScreenState extends State<LessonScreen> {
   void initializeYoutubeController(String content) {
     final ytId = YoutubeExtractor.extract(content: content, attribute: 'src');
     if (ytId.isEmpty) {
-      debugPrint("Error: Invalid YouTube ID extracted");
       showErrorDialog("Invalid YouTube video ID");
       return;
     }
@@ -114,7 +114,6 @@ class _LessonScreenState extends State<LessonScreen> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    // Resume playback if it was playing before
     Future.delayed(const Duration(milliseconds: 300), () {
       if (wasPlayingBeforeTransition && ytController != null) {
         ytController!.play();
@@ -254,27 +253,6 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  Widget youtubePlayer(YoutubePlayerController controller) {
-    return SafeArea(
-      child: YoutubePlayerBuilder(
-        onEnterFullScreen: onEnterFullScreen,
-        onExitFullScreen: onExitFullScreen,
-        player:  YoutubePlayer(
-          controller: ytController!,
-          showVideoProgressIndicator: true,
-          onEnded: (_) {
-            context.read<FinishLessonCubit>().finishLesson(widget.id);
-          },
-          progressColors: const ProgressBarColors(
-            playedColor: kGreenColor,
-            handleColor: kGreenColor,
-          ),
-        ),
-        builder: (context, player) => player
-      ),
-    );
-  }
-
   Widget buildPdfLesson(String content, String title) {
     final pdfUrl = PDFExtractor.extract(content: content);
 
@@ -320,8 +298,8 @@ class _LessonScreenState extends State<LessonScreen> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: 16.0,
-        horizontal: 32.0,
+        vertical: 16,
+        horizontal: 32,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,6 +319,27 @@ class _LessonScreenState extends State<LessonScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget youtubePlayer(YoutubePlayerController controller) {
+    return SafeArea(
+      child: YoutubePlayerBuilder(
+          onEnterFullScreen: onEnterFullScreen,
+          onExitFullScreen: onExitFullScreen,
+          player:  YoutubePlayer(
+            controller: ytController!,
+            showVideoProgressIndicator: true,
+            onEnded: (_) {
+              context.read<FinishLessonCubit>().finishLesson(widget.id);
+            },
+            progressColors: const ProgressBarColors(
+              playedColor: kGreenColor,
+              handleColor: kGreenColor,
+            ),
+          ),
+          builder: (context, player) => player
       ),
     );
   }
@@ -365,72 +364,16 @@ class _LessonScreenState extends State<LessonScreen> {
               children: sections.asMap().entries.map((sectionEntry) {
                 final section = sectionEntry.value;
                 final sectionIndex = sectionEntry.key + 1;
+                bool isExpanded = section.lessons?.any(
+                  (lesson) => lesson.lessonID.toString() == widget.id,
+                ) ?? false;
 
-                return Theme(
-                  data: Theme.of(context).copyWith(
-                      dividerColor: Colors.transparent
-                  ),
-                  child: ExpansionTile(
-                    backgroundColor: kWhiteColor,
-                    title: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        'Section $sectionIndex - ${section.sectionTitle ?? ''}',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          fontSize: 14,
-                          fontWeight: bold,
-                        ),
-                      ),
-                    ),
-                    children: section.lessons?.asMap().entries.map((lessonEntry) {
-                      final lesson = lessonEntry.value;
-                      final lessonIndex = getLessonIndex(sectionEntry.key, lessonEntry.key);
-
-                      return ListTile(
-                        visualDensity: const VisualDensity(vertical: -4),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                        leading: Text(
-                          '$lessonIndex',
-                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            fontSize: 14,
-                            fontWeight: bold,
-                          ),
-                        ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              lesson.lessonTitle!,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                fontSize: 14,
-                                fontWeight: bold,
-                              ),
-                            ),
-                            if (lesson.lessonType != null)
-                              Text(
-                                lesson.lessonType!,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                          ],
-                        ),
-                        trailing: Icon(
-                          Icons.check_circle_outline,
-                          color: lesson.isComplete! ? Colors.green : Colors.grey,
-                        ),
-                        onTap: () {
-                          context.pushNamed(
-                            RouteConstants.lessonScreen,
-                            pathParameters: {
-                              'id': widget.courseId.toString(),
-                              'lessonId': lesson.lessonID.toString(),
-                            },
-                          );
-                        },
-                      );
-                    }).toList() ?? [],
-                  ),
+                return SectionItem(
+                  section: section,
+                  courseId: widget.courseId,
+                  sectionIndex: sectionIndex,
+                  isExpanded: isExpanded,
+                  getLessonIndex: getLessonIndex,
                 );
               }).toList(),
             ),
@@ -447,7 +390,10 @@ class _LessonScreenState extends State<LessonScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24
+            ),
             child: Text(
               "Daftar Modul",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -458,7 +404,10 @@ class _LessonScreenState extends State<LessonScreen> {
           ),
           // Progress Bar
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 8
+            ),
             color: Colors.grey.withOpacity(0.1),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,68 +430,13 @@ class _LessonScreenState extends State<LessonScreen> {
           ),
           const SizedBox(height: 16),
           ...sections.map((section) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent
-              ),
-              child: ExpansionTile(
-                controlAffinity: ListTileControlAffinity.leading,
-                title: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        section.sectionTitle ?? '',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontSize: 16,
-                          fontWeight: bold
-                        ),
-                      ),
-                    ),
-                    if (section.lessons?.every((lesson) => lesson.isComplete == true) ?? false)
-                      const Icon(
-                        Icons.check_circle,
-                        color: kGreenColor
-                      ),
-                  ],
-                ),
-                backgroundColor: kWhiteColor,
-                collapsedBackgroundColor: kWhiteColor,
-                iconColor: kBlackColor,
-                collapsedIconColor: kBlackColor,
-                children: section.lessons?.map((lesson) {
-                  return ListTile(
-                    visualDensity: const VisualDensity(vertical: -4),
-                    title: Row(
-                      children: [
-                        const SizedBox(width: 36),
-                        Icon(
-                          Icons.check_circle_outline,
-                          color: lesson.isComplete! ? Colors.green : Colors.grey,
-                          size: 18
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            lesson.lessonTitle!,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyMedium
-                          ),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      context.pushNamed(
-                        RouteConstants.lessonScreen,
-                        pathParameters: {
-                          'id': widget.courseId.toString(),
-                          'lessonId': lesson.lessonID.toString(),
-                        },
-                      );
-                    },
-                  );
-                }).toList() ?? [],
-              ),
+            bool isExpanded = section.lessons?.any(
+              (lesson) => lesson.lessonID.toString() == widget.id
+            ) ?? false;
+            return SectionItemDrawer(
+              section: section,
+              courseId: widget.courseId,
+              isExpanded: isExpanded
             );
           }),
         ],
@@ -591,7 +485,7 @@ class _LessonScreenState extends State<LessonScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 title!,
                 textAlign: TextAlign.center,

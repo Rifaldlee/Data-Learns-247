@@ -25,7 +25,10 @@ class EmptyResultScreen extends StatelessWidget {
             ?.copyWith(color: kBlackColor)
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 16
+          ),
           child: Text(
             'Sepertinya tidak ada artikel atau pembelajaran yang sesuai. Coba gunakan kata kunci yang berbeda atau perluas pencarian Anda',
             textAlign: TextAlign.center,

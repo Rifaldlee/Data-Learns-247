@@ -65,7 +65,7 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 children:  state.listCourses.asMap().entries.map(
                   (entry) {

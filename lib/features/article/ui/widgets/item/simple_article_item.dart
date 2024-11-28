@@ -16,8 +16,8 @@ class SimpleArticleItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

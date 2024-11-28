@@ -20,7 +20,7 @@ class CardArticleItem extends StatelessWidget {
       child: Container(
         height: 320,
         width: 260,
-        margin: const EdgeInsets.only(right: 16.0),
+        margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           color: kWhiteColor,
           borderRadius: BorderRadius.circular(10),
@@ -79,7 +79,7 @@ class CardArticleItem extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

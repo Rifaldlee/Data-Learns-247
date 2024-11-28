@@ -61,7 +61,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       return SingleChildScrollView(
                         scrollDirection: Axis.vertical,
                         child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
                               if (selectedFilter == 'All') ...[
@@ -168,7 +168,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       child: PopupMenuButton<String>(
         color: kWhiteColor,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 8
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

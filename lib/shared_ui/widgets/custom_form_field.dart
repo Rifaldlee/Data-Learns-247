@@ -77,7 +77,10 @@ class _CustomFormFieldState extends State<CustomFormField> {
               hintText: widget.hintText,
               hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: kLightGreyColor),
               errorStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: kRedColor),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 20
+              ),
               enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(color: kLightGreyColor),
                 borderRadius: BorderRadius.circular(200),

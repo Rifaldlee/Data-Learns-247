@@ -132,7 +132,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -295,7 +295,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                     if (entry.key != state.listArticles.length - 1)
                       Container(
                         width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: DottedDecoration(
                           linePosition: LinePosition.bottom,
                           strokeWidth: 2,
@@ -348,7 +348,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                     if (entry.key != state.listArticles.length - 1)
                       Container(
                         width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: DottedDecoration(
                           linePosition: LinePosition.bottom,
                           strokeWidth: 2,
@@ -401,7 +401,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                     if (entry.key != state.listArticles.length - 1)
                       Container(
                         width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: DottedDecoration(
                           linePosition: LinePosition.bottom,
                           strokeWidth: 2,

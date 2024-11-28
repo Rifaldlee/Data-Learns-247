@@ -8,8 +8,8 @@ class SimpleArticleItemPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

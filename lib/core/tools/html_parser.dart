@@ -122,7 +122,7 @@ class HtmlContentParser {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+                    padding: const EdgeInsets.only(left: 8),
                     child: Text(li.text.trim(),
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: kBlackColor,
@@ -156,7 +156,7 @@ class HtmlContentParser {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+                    padding: const EdgeInsets.only(left: 8),
                     child: Text(li.text.trim(),
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: kBlackColor,
@@ -225,7 +225,10 @@ class HtmlContentParser {
             controller: scrollController,
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 6
+              ),
               margin: const EdgeInsets.only(top: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),

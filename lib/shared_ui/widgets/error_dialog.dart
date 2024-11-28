@@ -49,7 +49,10 @@ class ErrorDialog extends StatelessWidget {
                     TextButton(
                       onPressed: onClose,
                       style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 48.0),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 48
+                        ),
                         backgroundColor: kRedColor,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)

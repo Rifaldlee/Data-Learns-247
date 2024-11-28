@@ -45,7 +45,7 @@ class ProfileScreenPlaceholder extends StatelessWidget {
         const RectangleShimmerSizedBox(height: 40, width: double.infinity),
         const SizedBox(height: 8),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           child: Column(
             children: [
               profileItemPlaceholder(),

@@ -87,8 +87,8 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 32.0,
+                        vertical: 16,
+                        horizontal: 32,
                       ),
                       child: Column(
                         children: [
@@ -103,8 +103,8 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                    horizontal: 32.0,
+                    vertical: 16,
+                    horizontal: 32,
                   ),
                   child: courseButton(isEnrolled)
                 )
@@ -220,7 +220,7 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             borderRadius: BorderRadius.circular(8)
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 courseInformationItem(
@@ -311,7 +311,10 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             autoCloseDuration: const Duration(seconds: 4),
             title: const Text('Enroll berhasil'),
             icon: const Icon(Icons.check_circle_outline),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 16
+            ),
             borderRadius: BorderRadius.circular(12),
           );
         } else if (state is EnrollCourseError) {
@@ -328,7 +331,10 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             title: const Text('Login Unsuccessful'),
             description: RichText(text: TextSpan(text: state.message)),
             icon: const Icon(Icons.remove_circle_outline),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 16
+            ),
             borderRadius: BorderRadius.circular(12),
           );
         }

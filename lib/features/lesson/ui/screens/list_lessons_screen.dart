@@ -1,5 +1,3 @@
-import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
-import 'package:data_learns_247/features/course/ui/widgets/item/lesson_item.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +8,10 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/course/cubit/detail_course_cubit.dart';
+import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
 import 'package:data_learns_247/features/course/ui/widgets/placeholder/enrolled_detail_course_placeholder.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/item/lesson_item.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 

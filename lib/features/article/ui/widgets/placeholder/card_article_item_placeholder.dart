@@ -9,7 +9,7 @@ class CardArticleItemPlaceholder extends StatelessWidget {
     return Container(
       height: 320,
       width: 260,
-      margin: const EdgeInsets.only(right: 16.0),
+      margin: const EdgeInsets.only(right: 16),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

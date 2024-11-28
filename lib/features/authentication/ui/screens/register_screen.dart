@@ -187,7 +187,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       autoCloseDuration: const Duration(seconds: 3),
                                       title: const Text('Registrasi berhasil'),
                                       icon: const Icon(Icons.check_circle_outline),
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 16
+                                      ),
                                       borderRadius: BorderRadius.circular(12),
                                     );
                                     context.pushNamed(RouteConstants.login);
@@ -205,7 +208,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       title: const Text('Register Error'),
                                       description: RichText(text: TextSpan(text: state.message)),
                                       icon: const Icon(Icons.remove_circle_outline),
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 16
+                                      ),
                                       borderRadius: BorderRadius.circular(12),
                                     );
                                   }
