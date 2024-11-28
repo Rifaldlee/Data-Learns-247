@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -29,8 +30,12 @@ class LessonScreen extends StatefulWidget {
 }
 
 class _LessonScreenState extends State<LessonScreen> {
-  YoutubePlayerController? _ytController;
   List<Sections>? sections;
+  YoutubePlayerController? ytController;
+  bool isFullScreen = false;
+  bool isSeeking = false;
+  bool wasPlayingBeforeTransition = false;
+  double? lastPlaybackPosition;
 
   @override
   void initState() {
@@ -40,7 +45,8 @@ class _LessonScreenState extends State<LessonScreen> {
 
   @override
   void dispose() {
-    _ytController?.dispose();
+    ytController?.removeListener(youtubeControllerListener);
+    ytController?.dispose();
     super.dispose();
   }
 
@@ -58,6 +64,83 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
+  void initializeYoutubeController(String content) {
+    final ytId = YoutubeExtractor.extract(content: content, attribute: 'src');
+    if (ytId.isEmpty) {
+      debugPrint("Error: Invalid YouTube ID extracted");
+      showErrorDialog("Invalid YouTube video ID");
+      return;
+    }
+
+    if (ytController != null && ytController!.initialVideoId != ytId) {
+      ytController!.load(ytId);
+    }
+
+    ytController ??= YoutubePlayerController(
+      initialVideoId: ytId.toString(),
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        enableCaption: true,
+        controlsVisibleAtStart: true,
+      ),
+    );
+
+    ytController!.addListener(youtubeControllerListener);
+  }
+
+
+  void youtubeControllerListener() {
+    if (!mounted || ytController == null) return;
+    if (!isSeeking && ytController!.value.isReady && lastPlaybackPosition != null) {
+      isSeeking = true;
+      ytController!.seekTo(Duration(seconds: lastPlaybackPosition!.toInt()));
+      if (wasPlayingBeforeTransition) {
+        ytController!.play();
+      }
+      lastPlaybackPosition = null;
+      isSeeking = false;
+    }
+  }
+
+
+  void onEnterFullScreen() {
+    if (ytController != null) {
+      wasPlayingBeforeTransition = ytController!.value.isPlaying;
+      lastPlaybackPosition = ytController!.value.position.inSeconds.toDouble();
+    }
+    setState(() {
+      isFullScreen = true;
+    });
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    // Resume playback if it was playing before
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (wasPlayingBeforeTransition && ytController != null) {
+        ytController!.play();
+      }
+    });
+  }
+
+  void onExitFullScreen() {
+    if (ytController != null) {
+      wasPlayingBeforeTransition = ytController!.value.isPlaying;
+      lastPlaybackPosition = ytController!.value.position.inSeconds.toDouble();
+    }
+    setState(() {
+      isFullScreen = false;
+    });
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    // Resume playback if it was playing before
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (wasPlayingBeforeTransition && ytController != null) {
+        ytController!.play();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LessonCubit, LessonState>(
@@ -68,7 +151,8 @@ class _LessonScreenState extends State<LessonScreen> {
           final titleDoc = parse(state.lesson.title!);
           var title = titleDoc.querySelector('a')?.text;
           return Scaffold(
-            appBar: AppBar(
+            backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
+            appBar: isFullScreen ? null : AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.keyboard_backspace, size: 32),
                 onPressed: () {
@@ -105,7 +189,7 @@ class _LessonScreenState extends State<LessonScreen> {
                     title!
                   )
                 ),
-                lessonBottomNavBar(state.lesson)
+                if (!isFullScreen) lessonBottomNavBar(state.lesson)
               ],
             )
           );
@@ -133,37 +217,61 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   Widget buildYoutubeLesson(String content, String title) {
-    final ytId = YoutubeExtractor.extract(content: content, attribute: 'src');
-    _ytController = YoutubePlayerController(initialVideoId: ytId);
+    if (ytController == null) {
+      initializeYoutubeController(content);
+    }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        YoutubePlayer(
-          controller: _ytController!,
+    return SafeArea(
+      child: isFullScreen ? Center(
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: youtubePlayer(ytController!),
+        ),
+      ) : Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          youtubePlayer(ytController!),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
+            builder: (context, state) {
+              if (state is CourseSectionsCompleted) {
+                return courseSection(state.sections);
+              }
+              return const Text('No sections available');
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget youtubePlayer(YoutubePlayerController controller) {
+    return SafeArea(
+      child: YoutubePlayerBuilder(
+        onEnterFullScreen: onEnterFullScreen,
+        onExitFullScreen: onExitFullScreen,
+        player:  YoutubePlayer(
+          controller: ytController!,
+          showVideoProgressIndicator: true,
           onEnded: (_) {
             context.read<FinishLessonCubit>().finishLesson(widget.id);
           },
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+          progressColors: const ProgressBarColors(
+            playedColor: kGreenColor,
+            handleColor: kGreenColor,
           ),
         ),
-        BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
-          builder: (context, state) {
-            if (state is CourseSectionsCompleted) {
-              return courseSection(state.sections);
-            }
-            return const Text('No sections available');
-          },
-        )
-      ],
+        builder: (context, player) => player
+      ),
     );
   }
 
