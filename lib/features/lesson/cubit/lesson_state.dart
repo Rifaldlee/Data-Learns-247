@@ -12,11 +12,22 @@ class LessonLoading extends LessonState {}
 
 class LessonCompleted extends LessonState {
   final Lesson lesson;
+  final bool isComplete;
 
-  const LessonCompleted(this.lesson);
+  const LessonCompleted(this.lesson, this.isComplete);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [lesson];
+
+  LessonCompleted copyWith({
+    Lesson? lesson,
+    bool? isComplete
+  }) {
+    return LessonCompleted(
+      lesson ?? this.lesson,
+      isComplete ?? this.isComplete
+    );
+  }
 }
 
 class LessonError extends LessonState {

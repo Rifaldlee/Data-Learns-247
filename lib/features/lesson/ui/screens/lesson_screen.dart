@@ -1,3 +1,4 @@
+import 'package:data_learns_247/features/lesson/ui/widgets/finish_lesson_button_widget.dart';
 import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item.dart';
 import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item_drawer.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class LessonScreen extends StatefulWidget {
 
 class _LessonScreenState extends State<LessonScreen> {
   List<Sections>? sections;
+  bool isComplete = false;
   YoutubePlayerController? ytController;
   bool isFullScreen = false;
   bool isSeeking = false;
@@ -149,6 +151,7 @@ class _LessonScreenState extends State<LessonScreen> {
         } else if (state is LessonCompleted) {
           final titleDoc = parse(state.lesson.title!);
           var title = titleDoc.querySelector('a')?.text;
+          isComplete = state.lesson.isComplete ?? false;
           return Scaffold(
             backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
             appBar: isFullScreen ? null : AppBar(
@@ -185,7 +188,8 @@ class _LessonScreenState extends State<LessonScreen> {
                   child: buildLessonContent(
                     state.lesson.body!,
                     state.lesson.lessonType!,
-                    title!
+                    title!,
+                    isComplete
                   )
                 ),
                 if (!isFullScreen) lessonBottomNavBar(state.lesson)
@@ -202,20 +206,20 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  Widget buildLessonContent(String content, String type, String title) {
+  Widget buildLessonContent(String content, String type, String title, bool isComplete) {
     switch (type.toLowerCase()) {
       case 'youtube':
-        return buildYoutubeLesson(content, title);
+        return buildYoutubeLesson(content, title, isComplete);
       case 'pdf':
-        return buildPdfLesson(content, title);
+        return buildPdfLesson(content, title, isComplete);
       case 'article':
-        return SingleChildScrollView(child: buildArticleLesson(content, title));
+        return SingleChildScrollView(child: buildArticleLesson(content, title, isComplete));
       default:
         return const Center(child: Text('Unsupported lesson type'));
     }
   }
 
-  Widget buildYoutubeLesson(String content, String title) {
+  Widget buildYoutubeLesson(String content, String title, bool isComplete) {
     if (ytController == null) {
       initializeYoutubeController(content);
     }
@@ -232,12 +236,18 @@ class _LessonScreenState extends State<LessonScreen> {
           youtubePlayer(ytController!),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                finishLessonButton(isComplete, 'youtube'),
+              ],
             ),
           ),
           BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
@@ -253,7 +263,7 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  Widget buildPdfLesson(String content, String title) {
+  Widget buildPdfLesson(String content, String title, bool isComplete) {
     final pdfUrl = PDFExtractor.extract(content: content);
 
     return Column(
@@ -272,12 +282,18 @@ class _LessonScreenState extends State<LessonScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              finishLessonButton(isComplete, 'pdf'),
+            ],
           ),
         ),
         BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
@@ -292,7 +308,7 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  Widget buildArticleLesson(String content, String title) {
+  Widget buildArticleLesson(String content, String title, bool isComplete) {
     final document = parse(content);
     var elements = document.querySelectorAll('h1,h2,h3,p,ul,ol,figure,figcaption,code');
 
@@ -318,6 +334,7 @@ class _LessonScreenState extends State<LessonScreen> {
               }).whereType<Widget>().toList(),
             ),
           ),
+          finishLessonButton(isComplete, 'article')
         ],
       ),
     );
@@ -524,6 +541,48 @@ class _LessonScreenState extends State<LessonScreen> {
           if (lesson.nextLesson == 0)
             const Text('finish')
         ],
+      ),
+    );
+  }
+
+  Widget finishLessonButton(bool isComplete, String type) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: BlocConsumer<FinishLessonCubit, FinishLessonState>(
+        listener: (context, state) {
+          if (state is FinishLessonCompleted) {
+            context.read<LessonCubit>().updateCompleteStatus(true);
+          }
+        },
+        builder: (context, state) {
+          if (state is FinishLessonLoading) {
+            return Container(
+              width: double.infinity,
+              height: 45,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: kBlueColor,
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: kWhiteColor,
+                ),
+              ),
+            );
+          }
+          return BlocBuilder<LessonCubit, LessonState>(
+            builder: (context, state) {
+              if (state is LessonCompleted) {
+                return FinishLessonButtonWidget(
+                  isComplete: state.isComplete,
+                  id: widget.id,
+                  type: type,
+                );
+              }
+              return const SizedBox();
+            },
+          );
+        },
       ),
     );
   }

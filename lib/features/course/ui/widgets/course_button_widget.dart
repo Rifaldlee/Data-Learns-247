@@ -6,17 +6,23 @@ import 'package:data_learns_247/features/course/cubit/enroll_course_cubit.dart';
 import 'package:data_learns_247/shared_ui/widgets/affirmation_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/gradient_button.dart';
 
-class CourseButton extends StatefulWidget {
+class CourseButtonWidget extends StatefulWidget {
   final bool isEnrolled;
   final String id;
 
-  const CourseButton({super.key, required this.isEnrolled, required this.id});
+  const CourseButtonWidget({
+    super.key,
+    required this.isEnrolled,
+    required this.id,
+  });
 
   @override
-  State<CourseButton> createState() => _CourseButtonState();
+  State<CourseButtonWidget> createState() {
+    return _CourseButtonWidgetState();
+  }
 }
 
-class _CourseButtonState extends State<CourseButton> {
+class _CourseButtonWidgetState extends State<CourseButtonWidget> {
   late bool isEnrolled;
 
   @override
@@ -26,7 +32,7 @@ class _CourseButtonState extends State<CourseButton> {
   }
 
   @override
-  void didUpdateWidget(covariant CourseButton oldWidget) {
+  void didUpdateWidget(covariant CourseButtonWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.isEnrolled != widget.isEnrolled) {
       setState(() {

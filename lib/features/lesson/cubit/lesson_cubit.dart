@@ -18,12 +18,19 @@ class LessonCubit extends Cubit<LessonState> {
       Lesson? lesson = await GetLesson(id, _lessonRepository).call();
 
       if (lesson != null) {
-        emit(LessonCompleted(lesson));
+        emit(LessonCompleted(lesson, lesson.isComplete ?? false));
       } else {
         emit(const LessonError('No data available'));
       }
     } catch(e) {
       emit(LessonError(e.toString()));
+    }
+  }
+
+  void updateCompleteStatus(bool isComplete) {
+    final currentState = state;
+    if (currentState is LessonCompleted) {
+      emit(currentState.copyWith(isComplete: isComplete));
     }
   }
 }
