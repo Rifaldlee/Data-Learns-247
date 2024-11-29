@@ -228,12 +228,12 @@ class _LessonScreenState extends State<LessonScreen> {
       child: isFullScreen ? Center(
         child: FittedBox(
           fit: BoxFit.fill,
-          child: youtubePlayer(ytController!),
+          child: youtubePlayer(ytController!, isComplete),
         ),
       ) : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          youtubePlayer(ytController!),
+          youtubePlayer(ytController!, isComplete),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -266,45 +266,108 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget buildPdfLesson(String content, String title, bool isComplete) {
     final pdfUrl = PDFExtractor.extract(content: content);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: const PDF(
-            swipeHorizontal: true,
-            enableSwipe: true,
-          ).cachedFromUrl(
-            pdfUrl,
-            placeholder: (progress) => Center(child: Text('$progress %')),
-            errorWidget: (error) => Center(child: Text(error.toString())),
+    return SafeArea(
+      child: isFullScreen ? Stack(
+        children: [
+          Center(
+            child: AspectRatio(
+              aspectRatio: 16/9,
+              child: const PDF(
+                swipeHorizontal: true,
+                enableSwipe: true
+              ).cachedFromUrl(
+                pdfUrl,
+                errorWidget: (error) => Center(child: Text(error.toString())),
+              )
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: SafeArea(
+              child: GestureDetector(
+                onTap: onExitFullScreen,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.fullscreen_exit,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              )
+            )
+          ),
+        ]
+      ) : Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: const PDF(
+                  swipeHorizontal: true,
+                  enableSwipe: true,
+                ).cachedFromUrl(
+                  pdfUrl,
+                  placeholder: (progress) => Center(child: Text('$progress %')),
+                  errorWidget: (error) => Center(child: Text(error.toString())),
                 ),
               ),
-              finishLessonButton(isComplete, 'pdf'),
+              Positioned(
+                bottom: 10,
+                right: 10,
+                child: SafeArea(
+                  child: GestureDetector(
+                    onTap: onEnterFullScreen,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.fullscreen,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  )
+                )
+              ),
             ],
           ),
-        ),
-        BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
-          builder: (context, state) {
-            if (state is CourseSectionsCompleted) {
-              return courseSection(state.sections);
-            }
-            return const Text('No sections available');
-          },
-        )
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                finishLessonButton(isComplete, 'pdf'),
+              ],
+            ),
+          ),
+          BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
+            builder: (context, state) {
+              if (state is CourseSectionsCompleted) {
+                return courseSection(state.sections);
+              }
+              return const Text('No sections available');
+            },
+          )
+        ],
+      ),
     );
   }
 
@@ -340,7 +403,7 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  Widget youtubePlayer(YoutubePlayerController controller) {
+  Widget youtubePlayer(YoutubePlayerController controller, bool isComplete) {
     return SafeArea(
       child: YoutubePlayerBuilder(
           onEnterFullScreen: onEnterFullScreen,
@@ -349,7 +412,9 @@ class _LessonScreenState extends State<LessonScreen> {
             controller: ytController!,
             showVideoProgressIndicator: true,
             onEnded: (_) {
-              context.read<FinishLessonCubit>().finishLesson(widget.id);
+              if (!isComplete) {
+                context.read<FinishLessonCubit>().finishLesson(widget.id);
+              }
             },
             progressColors: const ProgressBarColors(
               playedColor: kGreenColor,
