@@ -7,7 +7,7 @@ import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/search/cubit/search_cubit.dart';
 import 'package:data_learns_247/features/search/data/models/search_model.dart';
-import 'package:data_learns_247/features/search/ui/screens/empty_result_screen.dart';
+import 'package:data_learns_247/shared_ui/screens/empty_screen.dart';
 import 'package:data_learns_247/features/search/ui/widgets/item/article_result_item.dart';
 import 'package:data_learns_247/features/search/ui/widgets/item/course_result_item.dart';
 import 'package:data_learns_247/features/search/ui/widgets/placeholder/search_result_placeholder.dart';
@@ -77,7 +77,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         ),
                       );
                     } else if (state is SearchEmpty) {
-                      return const EmptyResultScreen();
+                      return const EmptyScreen(
+                        title: 'Oops! Pencarian tidak ditemukan',
+                        description: 'Sepertinya tidak ada artikel atau pembelajaran yang sesuai. Coba gunakan kata kunci yang berbeda atau perluas pencarian Anda',
+                      );
                     } else if (state is SearchError) {
                       return Center(child: Text(state.message));
                     }

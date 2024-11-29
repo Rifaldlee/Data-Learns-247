@@ -1,3 +1,4 @@
+import 'package:data_learns_247/features/course/ui/widgets/course_button_widget.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,9 +13,7 @@ import 'package:data_learns_247/features/course/cubit/detail_course_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/enroll_course_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
 import 'package:data_learns_247/features/course/ui/widgets/placeholder/detail_course_placeholder.dart';
-import 'package:data_learns_247/shared_ui/widgets/affirmation_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
-import 'package:data_learns_247/shared_ui/widgets/gradient_button.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 
 class DetailCourseScreen extends StatefulWidget {
@@ -296,9 +295,7 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
     return BlocConsumer<EnrollCourseCubit, EnrollCourseState>(
       listener: (context, state) {
         if (state is EnrollCourseCompleted) {
-          setState(() {
-            isEnrolled = true;
-          });
+          context.read<DetailCourseCubit>().updateEnrollment(true);
           toastification.show(
             context: context,
             type: ToastificationType.success,
@@ -308,7 +305,7 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             closeButtonShowType: CloseButtonShowType.always,
             showIcon: true,
             dragToClose: true,
-            autoCloseDuration: const Duration(seconds: 4),
+            autoCloseDuration: const Duration(seconds: 3),
             title: const Text('Enroll berhasil'),
             icon: const Icon(Icons.check_circle_outline),
             padding: const EdgeInsets.symmetric(
@@ -327,8 +324,8 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             closeButtonShowType: CloseButtonShowType.always,
             showIcon: true,
             dragToClose: true,
-            autoCloseDuration: const Duration(seconds: 4),
-            title: const Text('Login Unsuccessful'),
+            autoCloseDuration: const Duration(seconds: 5),
+            title: const Text('Enroll gagal'),
             description: RichText(text: TextSpan(text: state.message)),
             icon: const Icon(Icons.remove_circle_outline),
             padding: const EdgeInsets.symmetric(
@@ -359,29 +356,16 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             ),
           );
         }
-        return GradientButton(
-          buttonTitle: isEnrolled ? 'Go to course' : 'Enroll',
-          onPressed: () {
-            if (isEnrolled) {
-              context.pushNamed(
-                RouteConstants.listLessons,
-                pathParameters: {
-                  'id': widget.id.toString(),
-                },
-              );
-            } else {
-              showDialog(context: context,
-                builder: (context) => AffirmationDialog(
-                  message: 'Apakah anda ingin mendaftar kelas ini?',
-                  proceedText: 'Iya',
-                  onPressed: () {
-                    context.read<EnrollCourseCubit>().enrollCourse(widget.id);
-                    context.pop();
-                  }
-                )
+        return BlocBuilder<DetailCourseCubit, DetailCourseState>(
+          builder: (context, state) {
+            if (state is DetailCourseCompleted) {
+              return CourseButton(
+                isEnrolled: state.isEnrolled,
+                id: widget.id,
               );
             }
-          }
+            return const SizedBox();
+          },
         );
       }
     );

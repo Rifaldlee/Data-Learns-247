@@ -18,12 +18,19 @@ class DetailCourseCubit extends Cubit<DetailCourseState> {
       Course? detailCourse = await GetDetailCourse(id, _courseRepository).call();
 
       if (detailCourse != null) {
-        emit(DetailCourseCompleted(detailCourse));
+        emit(DetailCourseCompleted(detailCourse, detailCourse.isEnrolled ?? false));
       } else {
         emit(const DetailCourseError('No data available'));
       }
     } catch(e) {
       emit(DetailCourseError(e.toString()));
+    }
+  }
+
+  void updateEnrollment(bool isEnrolled) {
+    final currentState = state;
+    if (currentState is DetailCourseCompleted) {
+      emit(currentState.copyWith(isEnrolled: isEnrolled));
     }
   }
 }

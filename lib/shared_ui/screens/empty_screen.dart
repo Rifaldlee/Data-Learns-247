@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 
-class EmptyResultScreen extends StatelessWidget {
-  const EmptyResultScreen({super.key});
+class EmptyScreen extends StatelessWidget {
+  final String title;
+  final String description;
+
+  const EmptyScreen({
+    super.key,
+    required this.title,
+    required this.description
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,7 @@ class EmptyResultScreen extends StatelessWidget {
           ),
         ),
         Text(
-          'Oops! Pencarian tidak ditemukan',
+          title,
           textAlign: TextAlign.center,
           style: Theme.of(context)
             .textTheme
@@ -30,7 +37,7 @@ class EmptyResultScreen extends StatelessWidget {
             horizontal: 16
           ),
           child: Text(
-            'Sepertinya tidak ada artikel atau pembelajaran yang sesuai. Coba gunakan kata kunci yang berbeda atau perluas pencarian Anda',
+            description,
             textAlign: TextAlign.center,
             style: Theme.of(context)
               .textTheme
