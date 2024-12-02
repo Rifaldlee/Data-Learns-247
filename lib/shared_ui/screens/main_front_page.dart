@@ -1,11 +1,13 @@
-import 'package:data_learns_247/features/course/ui/screens/my_courses_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:data_learns_247/core/theme/color.dart';
+import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:data_learns_247/features/article/ui/screens/list_article_screen.dart';
 import 'package:data_learns_247/features/authentication/ui/screens/profile_screen.dart';
 import 'package:data_learns_247/features/course/ui/screens/list_courses_screen.dart';
 import 'package:data_learns_247/features/search/ui/screens/search_screen.dart';
+import 'package:data_learns_247/features/course/ui/screens/my_courses_list_screen.dart';
 
 class MainFrontPage extends StatefulWidget {
   const MainFrontPage({super.key});
@@ -17,70 +19,58 @@ class MainFrontPage extends StatefulWidget {
 }
 
 class _MainFrontPageState extends State<MainFrontPage> {
-  int _selectedTabIndex = 0;
-
-  void _selectTab(int index) {
-    setState(() {
-      _selectedTabIndex = index;
-    });
-  }
-
-
   @override
   Widget build(BuildContext context) {
-
-    Widget activeTab = const ListArticlesScreen();
-    if (_selectedTabIndex == 1) {
-      activeTab = const ListCoursesScreen();
-    }
-    if (_selectedTabIndex == 2) {
-      activeTab = const MyCoursesListScreen();
-    }
-    if (_selectedTabIndex == 3) {
-      activeTab = const SearchScreen();
-    }
-    if (_selectedTabIndex == 4) {
-      activeTab = const ProfileScreen();
-    }
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: kWhiteColor,
-        statusBarIconBrightness: Brightness.dark
+        statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: kWhiteColor,
-        body: activeTab,
+        body: BlocBuilder<PageCubit, int>(
+          builder: (context, selectedTabIndex) {
+            Widget activeTab = const ListArticlesScreen();
+            if (selectedTabIndex == 1) activeTab = const ListCoursesScreen();
+            if (selectedTabIndex == 2) activeTab = const MyCoursesListScreen();
+            if (selectedTabIndex == 3) activeTab = const SearchScreen();
+            if (selectedTabIndex == 4) activeTab = const ProfileScreen();
+
+            return activeTab;
+          },
+        ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: kWhiteColor,
-          onTap: _selectTab,
-          currentIndex: _selectedTabIndex,
+          onTap: (index) {
+            context.read<PageCubit>().setPage(index);
+          },
+          currentIndex: context.watch<PageCubit>().state,
           selectedItemColor: kGreenColor,
           selectedLabelStyle: const TextStyle(fontSize: 12),
           unselectedLabelStyle: const TextStyle(fontSize: 12),
           items: [
             BottomNavigationBarItem(
-              icon: _selectedTabIndex == 0
-                  ? const Icon(Icons.article)
-                  : const Icon(Icons.article_outlined),
+              icon: context.read<PageCubit>().state == 0
+                ? const Icon(Icons.article)
+                : const Icon(Icons.article_outlined),
               label: 'Article',
             ),
             BottomNavigationBarItem(
-              icon: _selectedTabIndex == 1
-                  ? const Icon(Icons.play_lesson)
-                  : const Icon(Icons.play_lesson_outlined),
+              icon: context.read<PageCubit>().state == 1
+                ? const Icon(Icons.play_lesson)
+                : const Icon(Icons.play_lesson_outlined),
               label: 'Course',
             ),
             BottomNavigationBarItem(
-              icon: _selectedTabIndex == 2
-                  ? const Icon(Icons.play_circle_fill)
-                  : const Icon(Icons.play_circle_outline),
+              icon: context.read<PageCubit>().state == 2
+                ? const Icon(Icons.play_circle_fill)
+                : const Icon(Icons.play_circle_outline),
               label: 'My Learning',
             ),
             BottomNavigationBarItem(
-              icon: _selectedTabIndex == 3
-                ? Container (
+              icon: context.read<PageCubit>().state == 3
+                ? Container(
                 width: 24,
                 height: 24,
                 decoration: const BoxDecoration(
@@ -91,18 +81,18 @@ class _MainFrontPageState extends State<MainFrontPage> {
                   Icons.search,
                   color: kWhiteColor,
                   size: 20,
-                )
+                ),
               )
-                : const Icon(Icons.search),
+              : const Icon(Icons.search),
               label: 'Search',
             ),
             BottomNavigationBarItem(
-              icon: _selectedTabIndex == 4
-                  ? const Icon(Icons.person)
-                  : const Icon(Icons.person_outline),
+              icon: context.read<PageCubit>().state == 4
+                ? const Icon(Icons.person)
+                : const Icon(Icons.person_outline),
               label: 'Profile',
             ),
-          ]
+          ],
         ),
       ),
     );

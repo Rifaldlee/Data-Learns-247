@@ -1,3 +1,4 @@
+import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,46 +61,55 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
           return const EnrolledDetailCoursePlaceholder();
         }
         if (state is DetailCourseCompleted) {
-          return Scaffold(
-            backgroundColor: kWhiteColor,
-            appBar: AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.keyboard_backspace, size: 32),
-                onPressed: () {
-                  context.pushNamed(
-                    RouteConstants.detailCourse,
-                    pathParameters: {
-                      'id': widget.id.toString(),
-                    },
-                  );
-                }
-              ),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 32.0,
-                      ),
-                      child: Column(
-                        children: [
-                          detailCourseHeading(state.detailCourse),
-                          const SizedBox(height: 16),
-                          if (state.detailCourse.sections != null)
-                            courseSection(
-                              state.detailCourse.sections!,
-                              state.detailCourse.progress!
-                            ),
-                        ],
-                      ),
-                    )
-                  ),
+          return PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                context.read<PageCubit>().setPage(2);
+                context.pushNamed(
+                  RouteConstants.mainFrontPage,
+                );
+              }
+            },
+            child: Scaffold(
+              backgroundColor: kWhiteColor,
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.keyboard_backspace, size: 32),
+                  onPressed: () {
+                    context.read<PageCubit>().setPage(2);
+                    context.pushNamed(
+                      RouteConstants.mainFrontPage,
+                    );
+                  }
                 ),
-              ],
-            )
+              ),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16.0,
+                          horizontal: 32.0,
+                        ),
+                        child: Column(
+                          children: [
+                            detailCourseHeading(state.detailCourse),
+                            const SizedBox(height: 16),
+                            if (state.detailCourse.sections != null)
+                              courseSection(
+                                state.detailCourse.sections!,
+                                state.detailCourse.progress!
+                              ),
+                          ],
+                        ),
+                      )
+                    ),
+                  ),
+                ],
+              )
+            ),
           );
         }
         if (state is DetailCourseError) {

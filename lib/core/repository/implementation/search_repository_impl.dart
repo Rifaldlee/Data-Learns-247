@@ -17,7 +17,6 @@ class SearchRepositoryImpl extends SearchRepository{
         queryParam: QP.searchQP(query: query),
         useBearer: true,
       );
-      print('HASIL = ${response.body}');
       return NetworkHelper.filterResponse(
           callBack: (json) => SearchResult.fromJson(json as Map<String, dynamic>),
           response: response

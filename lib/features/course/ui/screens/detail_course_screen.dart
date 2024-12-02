@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:html/parser.dart';
 import 'package:toastification/toastification.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
+import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/core/tools/html_parser.dart';
@@ -67,48 +68,60 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
         }
         if (state is DetailCourseCompleted) {
           isEnrolled = state.detailCourse.isEnrolled ?? false;
-          return Scaffold(
-            backgroundColor: kWhiteColor,
-            appBar: AppBar(
+          return PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                context.read<PageCubit>().setPage(1);
+                context.pushNamed(
+                  RouteConstants.mainFrontPage,
+                );
+              }
+            },
+            child: Scaffold(
               backgroundColor: kWhiteColor,
-              leading: IconButton(
-                icon: const Icon(Icons.keyboard_backspace, size: 32),
-                onPressed: () {
-                  context.pushNamed(
-                    RouteConstants.mainFrontPage,
-                  );
-                },
-              ),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 32,
-                      ),
-                      child: Column(
-                        children: [
-                          detailCourseHeading(state.detailCourse),
-                          courseInformation(state.detailCourse),
-                          courseContent(state.detailCourse.body!),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    )
-                  ),
+              appBar: AppBar(
+                backgroundColor: kWhiteColor,
+                leading: IconButton(
+                  icon: const Icon(Icons.keyboard_backspace, size: 32),
+                  onPressed: () {
+                    context.read<PageCubit>().setPage(1);
+                    context.pushNamed(
+                      RouteConstants.mainFrontPage,
+                    );
+                  },
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 32,
+              ),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 32,
+                        ),
+                        child: Column(
+                          children: [
+                            detailCourseHeading(state.detailCourse),
+                            courseInformation(state.detailCourse),
+                            courseContent(state.detailCourse.body!),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      )
+                    ),
                   ),
-                  child: courseButton(isEnrolled)
-                )
-              ],
-            )
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 32,
+                    ),
+                    child: courseButton(isEnrolled)
+                  )
+                ],
+              )
+            ),
           );
         }
         if (state is DetailCourseError) {

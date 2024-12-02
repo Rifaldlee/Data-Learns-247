@@ -1,6 +1,3 @@
-import 'package:data_learns_247/features/lesson/ui/widgets/finish_lesson_button_widget.dart';
-import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item.dart';
-import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +14,9 @@ import 'package:data_learns_247/core/tools/youtube_extractor.dart';
 import 'package:data_learns_247/features/lesson/cubit/finish_lesson_cubit.dart';
 import 'package:data_learns_247/features/lesson/cubit/lesson_cubit.dart';
 import 'package:data_learns_247/features/lesson/data/models/lesson_model.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/finish_lesson_button_widget.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item_drawer.dart';
 import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
@@ -86,7 +86,6 @@ class _LessonScreenState extends State<LessonScreen> {
         controlsVisibleAtStart: true,
       ),
     );
-
     ytController!.addListener(youtubeControllerListener);
   }
 
@@ -102,7 +101,6 @@ class _LessonScreenState extends State<LessonScreen> {
       isSeeking = false;
     }
   }
-
 
   void onEnterFullScreen() {
     if (ytController != null) {
@@ -133,7 +131,6 @@ class _LessonScreenState extends State<LessonScreen> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    // Resume playback if it was playing before
     Future.delayed(const Duration(milliseconds: 300), () {
       if (wasPlayingBeforeTransition && ytController != null) {
         ytController!.play();
@@ -159,49 +156,62 @@ class _LessonScreenState extends State<LessonScreen> {
           final titleDoc = parse(state.lesson.title!);
           var title = titleDoc.querySelector('a')?.text;
           isComplete = state.lesson.isComplete ?? false;
-          return Scaffold(
-            backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
-            appBar: isFullScreen ? null : AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.keyboard_backspace, size: 32),
-                onPressed: () {
-                  context.pushNamed(
-                    RouteConstants.listLessons,
-                    pathParameters: {
-                      'id': widget.courseId.toString(),
-                    },
-                  );
-                }
-              ),
-            ),
-            endDrawer: Drawer(
-              child: BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
-                builder: (context, state) {
-                  if (state is CourseSectionsCompleted) {
-                    return Container(
-                      color: kWhiteColor,
-                      child: SingleChildScrollView(
-                        child: courseSectionDrawer(state.sections, state.progress),
-                      ),
+          return PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                context.pushNamed(
+                  RouteConstants.listLessons,
+                  pathParameters: {
+                    'id': widget.courseId.toString(),
+                  },
+                );
+              }
+            },
+            child: Scaffold(
+              backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
+              appBar: isFullScreen ? null : AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.keyboard_backspace, size: 32),
+                  onPressed: () {
+                    context.pushNamed(
+                      RouteConstants.listLessons,
+                      pathParameters: {
+                        'id': widget.courseId.toString(),
+                      },
                     );
                   }
-                  return const Text('No sections available');
-                },
-              ),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: buildLessonContent(
-                    state.lesson.body!,
-                    state.lesson.lessonType!,
-                    title!,
-                    isComplete
-                  )
                 ),
-                if (!isFullScreen) lessonBottomNavBar(state.lesson)
-              ],
-            )
+              ),
+              endDrawer: Drawer(
+                child: BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
+                  builder: (context, state) {
+                    if (state is CourseSectionsCompleted) {
+                      return Container(
+                        color: kWhiteColor,
+                        child: SingleChildScrollView(
+                          child: courseSectionDrawer(state.sections, state.progress),
+                        ),
+                      );
+                    }
+                    return const Text('No sections available');
+                  },
+                ),
+              ),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: buildLessonContent(
+                      state.lesson.body!,
+                      state.lesson.lessonType!,
+                      title!,
+                      isComplete
+                    )
+                  ),
+                  if (!isFullScreen) lessonBottomNavBar(state.lesson)
+                ],
+              )
+            ),
           );
         } else if (state is LessonError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {

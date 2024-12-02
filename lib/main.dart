@@ -1,3 +1,4 @@
+import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => PageCubit()),
         BlocProvider(create: (context) => SearchCubit()),
         BlocProvider(create: (context) => RegisterCubit()),
         BlocProvider(create: (context) => LoginCubit()),
