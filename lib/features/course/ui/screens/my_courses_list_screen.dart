@@ -2,6 +2,7 @@ import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
 import 'package:data_learns_247/features/course/ui/widgets/item/my_course_item.dart';
+import 'package:data_learns_247/features/course/ui/widgets/placeholder/my_course_list_placeholder.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -61,6 +62,7 @@ class _MyCoursesListScreenState extends State<MyCoursesListScreen> {
     return BlocBuilder<MyCoursesListCubit, MyCoursesListState>(
       builder: (context, state) {
         if (state is MyCoursesListLoading) {
+          return const MyCourseListPlaceHolder();
         }
         if (state is MyCoursesListCompleted) {
           return SingleChildScrollView(

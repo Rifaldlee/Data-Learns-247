@@ -90,7 +90,6 @@ class _LessonScreenState extends State<LessonScreen> {
     ytController!.addListener(youtubeControllerListener);
   }
 
-
   void youtubeControllerListener() {
     if (!mounted || ytController == null) return;
     if (!isSeeking && ytController!.value.isReady && lastPlaybackPosition != null) {
@@ -147,7 +146,15 @@ class _LessonScreenState extends State<LessonScreen> {
     return BlocBuilder<LessonCubit, LessonState>(
       builder: (context, state) {
         if (state is LessonLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Container(
+            color: kWhiteColor,
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: kGreenColor,
+                backgroundColor: kWhiteColor,
+              )
+            ),
+          );
         } else if (state is LessonCompleted) {
           final titleDoc = parse(state.lesson.title!);
           var title = titleDoc.querySelector('a')?.text;
@@ -267,43 +274,51 @@ class _LessonScreenState extends State<LessonScreen> {
     final pdfUrl = PDFExtractor.extract(content: content);
 
     return SafeArea(
-      child: isFullScreen ? Stack(
-        children: [
-          Center(
-            child: AspectRatio(
-              aspectRatio: 16/9,
-              child: const PDF(
-                swipeHorizontal: true,
-                enableSwipe: true
-              ).cachedFromUrl(
-                pdfUrl,
-                errorWidget: (error) => Center(child: Text(error.toString())),
+      child: isFullScreen ? PopScope(
+        canPop: true,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
+            onExitFullScreen();
+          }
+        },
+        child: Stack(
+          children: [
+            Center(
+              child: AspectRatio(
+                aspectRatio: 16/9,
+                child: const PDF(
+                  swipeHorizontal: true,
+                  enableSwipe: true
+                ).cachedFromUrl(
+                  pdfUrl,
+                  errorWidget: (error) => Center(child: Text(error.toString())),
+                )
+              ),
+            ),
+            Positioned(
+              bottom: 10,
+              right: 10,
+              child: SafeArea(
+                child: GestureDetector(
+                  onTap: onExitFullScreen,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.fullscreen_exit,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                )
               )
             ),
-          ),
-          Positioned(
-            bottom: 10,
-            right: 10,
-            child: SafeArea(
-              child: GestureDetector(
-                onTap: onExitFullScreen,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.fullscreen_exit,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-              )
-            )
-          ),
-        ]
-      ) : Column(
+          ]
+        ),
+      ): Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(

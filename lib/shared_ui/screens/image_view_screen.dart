@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:data_learns_247/core/theme/color.dart';
 
 class ImageViewerScreen extends StatelessWidget {
   final String imageUrl;
@@ -19,7 +20,7 @@ class ImageViewerScreen extends StatelessWidget {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: kBlackColor,
       body: Stack(
         children: [
           PhotoView(
@@ -32,6 +33,8 @@ class ImageViewerScreen extends StatelessWidget {
             gestureDetectorBehavior: HitTestBehavior.opaque,
             loadingBuilder: (context, event) => Center(
               child: CircularProgressIndicator(
+                color: kGreenColor,
+                backgroundColor: kBlackColor,
                 value: event == null
                     ? 0
                     : event.cumulativeBytesLoaded / event.expectedTotalBytes!,

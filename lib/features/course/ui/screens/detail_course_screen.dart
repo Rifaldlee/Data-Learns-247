@@ -352,6 +352,7 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
               widthFactor: 42,
               child:  CircularProgressIndicator(
                 color: kWhiteColor,
+                backgroundColor: kWhiteColor,
               ),
             ),
           );

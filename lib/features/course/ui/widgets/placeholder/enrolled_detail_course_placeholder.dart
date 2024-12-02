@@ -11,8 +11,8 @@ class EnrolledDetailCoursePlaceholder extends StatelessWidget {
       backgroundColor: kWhiteColor,
       appBar: AppBar(
         leading: Transform.translate(
-            offset: const Offset(16.0, 0.0),
-            child: const RectangleShimmerSizedBox(height: 32, width: 32)
+          offset: const Offset(16.0, 0.0),
+          child: const RectangleShimmerSizedBox(height: 32, width: 32)
         ),
       ),
       body: const SingleChildScrollView(
@@ -25,8 +25,6 @@ class EnrolledDetailCoursePlaceholder extends StatelessWidget {
             children: [
               RectangleShimmerSizedBox(height: 200, width: double.infinity),
               SizedBox(height: 8),
-              RectangleShimmerSizedBox(height: 22, width: double.infinity),
-              SizedBox(height: 12),
               RectangleShimmerSizedBox(height: 42, width: double.infinity),
               SizedBox(height: 12),
               Row(

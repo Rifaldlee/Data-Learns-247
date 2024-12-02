@@ -1,3 +1,4 @@
+import 'package:data_learns_247/features/course/ui/widgets/placeholder/list_course_placeholder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,6 +61,7 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
     return BlocBuilder<ListCoursesCubit, ListCoursesState>(
       builder: (context, state) {
         if (state is ListCoursesLoading) {
+          return const ListCoursePlaceholder();
         }
         if (state is ListCoursesCompleted) {
           return SingleChildScrollView(

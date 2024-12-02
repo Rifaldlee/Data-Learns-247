@@ -152,7 +152,10 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (context, state) {
         if(state is LoginLoading){
           return const Center(
-            child: CircularProgressIndicator(color: kGreenColor),
+              child: CircularProgressIndicator(
+              color: kGreenColor,
+              backgroundColor: kWhiteColor,
+            ),
           );
         }
         return GradientButton(

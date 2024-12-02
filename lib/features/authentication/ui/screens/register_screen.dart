@@ -221,6 +221,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     return const Center(
                                       child: CircularProgressIndicator(
                                         color: kGreenColor,
+                                        backgroundColor: kWhiteColor,
                                       )
                                     );
                                   }
