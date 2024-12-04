@@ -1,4 +1,8 @@
+import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/features/course/ui/widgets/placeholder/list_course_placeholder.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
+import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
+import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,6 +52,24 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
       ),
       child: Scaffold(
         backgroundColor: kWhiteColor,
+        appBar: CustomAppBar(
+          showBackButton: false,
+          leading: Container(
+            decoration: DottedDecoration(
+              shape: Shape.line,
+              linePosition: LinePosition.bottom,
+            ),
+            child: Text(
+              'Course',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontSize: 22,
+                fontWeight: bold,
+              ),
+            ),
+          ),
+          content: const Spacer(),
+          trailing: const SearchButton(),
+        ),
         body: ListView(
           children: [
             listCourses()
@@ -67,9 +89,9 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Column(
-                children:  state.listCourses.asMap().entries.map(
+                children: state.listCourses.asMap().entries.map(
                   (entry) {
                     final listCourses = entry.value;
                     return Column(

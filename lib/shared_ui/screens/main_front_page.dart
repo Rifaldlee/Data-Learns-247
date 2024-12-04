@@ -6,7 +6,6 @@ import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:data_learns_247/features/article/ui/screens/list_article_screen.dart';
 import 'package:data_learns_247/features/authentication/ui/screens/profile_screen.dart';
 import 'package:data_learns_247/features/course/ui/screens/list_courses_screen.dart';
-import 'package:data_learns_247/features/search/ui/screens/search_screen.dart';
 import 'package:data_learns_247/features/course/ui/screens/my_courses_list_screen.dart';
 
 class MainFrontPage extends StatefulWidget {
@@ -33,8 +32,7 @@ class _MainFrontPageState extends State<MainFrontPage> {
             Widget activeTab = const ListArticlesScreen();
             if (selectedTabIndex == 1) activeTab = const ListCoursesScreen();
             if (selectedTabIndex == 2) activeTab = const MyCoursesListScreen();
-            if (selectedTabIndex == 3) activeTab = const SearchScreen();
-            if (selectedTabIndex == 4) activeTab = const ProfileScreen();
+            if (selectedTabIndex == 3) activeTab = const ProfileScreen();
 
             return activeTab;
           },
@@ -70,24 +68,6 @@ class _MainFrontPageState extends State<MainFrontPage> {
             ),
             BottomNavigationBarItem(
               icon: context.read<PageCubit>().state == 3
-                ? Container(
-                width: 24,
-                height: 24,
-                decoration: const BoxDecoration(
-                  color: kGreenColor,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.search,
-                  color: kWhiteColor,
-                  size: 20,
-                ),
-              )
-              : const Icon(Icons.search),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: context.read<PageCubit>().state == 4
                 ? const Icon(Icons.person)
                 : const Icon(Icons.person_outline),
               label: 'Profile',

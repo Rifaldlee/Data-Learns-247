@@ -8,6 +8,7 @@ import 'package:data_learns_247/features/authentication/ui/screens/register_scre
 import 'package:data_learns_247/features/course/ui/screens/detail_course_screen.dart';
 import 'package:data_learns_247/features/lesson/ui/screens/list_lessons_screen.dart';
 import 'package:data_learns_247/features/lesson/ui/screens/lesson_screen.dart';
+import 'package:data_learns_247/features/search/ui/screens/search_screen.dart';
 import 'package:data_learns_247/features/search/ui/screens/search_result_screen.dart';
 import 'package:data_learns_247/shared_ui/screens/main_front_page.dart';
 import 'package:data_learns_247/shared_ui/screens/splash_screen.dart';
@@ -49,6 +50,23 @@ class AppRouter {
           },
           routes: [
             GoRoute(
+              name:  RouteConstants.searchScreen,
+              path: 'searchScreen',
+              pageBuilder: (context, state) {
+                return const MaterialPage(child: SearchScreen());
+              },
+              routes: [
+                GoRoute(
+                  name: RouteConstants.searchResult,
+                  path: 'searchResult/:query',
+                  pageBuilder: (context, state) {
+                    final query = state.pathParameters['query']!;
+                    return MaterialPage(child: SearchResultScreen(query: query));
+                  },
+                ),
+              ],
+            ),
+            GoRoute(
               name: RouteConstants.detailArticle,
               path: 'detailArticle/:id/:has_video',
               pageBuilder: (context, state) {
@@ -87,14 +105,6 @@ class AppRouter {
                   ],
                 ),
               ],
-            ),
-            GoRoute(
-              name: RouteConstants.searchResult,
-              path: 'searchResult/:query',
-              pageBuilder: (context, state) {
-                final query = state.pathParameters['query']!;
-                return MaterialPage(child: SearchResultScreen(query: query));
-              },
             ),
           ],
         ),

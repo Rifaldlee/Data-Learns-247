@@ -1,3 +1,6 @@
+import 'package:data_learns_247/core/theme/theme.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
+import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +76,24 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
       ),
       child: Scaffold(
         backgroundColor: kWhiteColor,
+        appBar: CustomAppBar(
+          showBackButton: false,
+          leading: Container(
+            decoration: DottedDecoration(
+              shape: Shape.line,
+              linePosition: LinePosition.bottom,
+            ),
+            child: Text(
+              'Article',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontSize: 22,
+                fontWeight: bold,
+              ),
+            ),
+          ),
+          content: const Spacer(),
+          trailing: const SearchButton(),
+        ),
         body: ListView(
           children: [
             leadingArticle(),
@@ -109,7 +130,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
             },
             child: Container(
               width: double.infinity,
-              margin: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.only(bottom: 8),
               decoration: DottedDecoration(
                 linePosition: LinePosition.bottom,
