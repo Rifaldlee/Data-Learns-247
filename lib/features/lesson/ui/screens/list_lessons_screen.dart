@@ -1,4 +1,5 @@
 import 'package:data_learns_247/core/route/page_cubit.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,16 +74,14 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
             },
             child: Scaffold(
               backgroundColor: kWhiteColor,
-              appBar: AppBar(
-                leading: IconButton(
-                  icon: const Icon(Icons.keyboard_backspace, size: 32),
-                  onPressed: () {
-                    context.read<PageCubit>().setPage(2);
-                    context.pushNamed(
-                      RouteConstants.mainFrontPage,
-                    );
-                  }
-                ),
+              appBar: CustomAppBar(
+                showBackButton: true,
+                backAction: () {
+                  context.read<PageCubit>().setPage(2);
+                  context.pushNamed(
+                    RouteConstants.mainFrontPage,
+                  );
+                },
               ),
               body: Column(
                 children: [

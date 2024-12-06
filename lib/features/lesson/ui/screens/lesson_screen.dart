@@ -1,3 +1,4 @@
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -170,18 +171,16 @@ class _LessonScreenState extends State<LessonScreen> {
             },
             child: Scaffold(
               backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
-              appBar: isFullScreen ? null : AppBar(
-                leading: IconButton(
-                  icon: const Icon(Icons.keyboard_backspace, size: 32),
-                  onPressed: () {
-                    context.pushNamed(
-                      RouteConstants.listLessons,
-                      pathParameters: {
-                        'id': widget.courseId.toString(),
-                      },
-                    );
-                  }
-                ),
+              appBar: isFullScreen ? null : CustomAppBar(
+                showBackButton: true,
+                backAction: () {
+                  context.pushNamed(
+                    RouteConstants.listLessons,
+                    pathParameters: {
+                      'id': widget.courseId.toString(),
+                    },
+                  );
+                },
               ),
               endDrawer: Drawer(
                 child: BlocBuilder<CourseSectionsCubit, CourseSectionsState>(

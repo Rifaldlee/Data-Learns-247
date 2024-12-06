@@ -1,4 +1,3 @@
-import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
@@ -76,23 +75,10 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
       ),
       child: Scaffold(
         backgroundColor: kWhiteColor,
-        appBar: CustomAppBar(
+        appBar: const CustomAppBar(
           showBackButton: false,
-          leading: Container(
-            decoration: DottedDecoration(
-              shape: Shape.line,
-              linePosition: LinePosition.bottom,
-            ),
-            child: Text(
-              'Article',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontSize: 22,
-                fontWeight: bold,
-              ),
-            ),
-          ),
-          content: const Spacer(),
-          trailing: const SearchButton(),
+          title: 'Article',
+          trailing: SearchButton(),
         ),
         body: ListView(
           children: [

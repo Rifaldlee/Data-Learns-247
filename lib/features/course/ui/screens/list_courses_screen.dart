@@ -52,23 +52,10 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
       ),
       child: Scaffold(
         backgroundColor: kWhiteColor,
-        appBar: CustomAppBar(
+        appBar: const CustomAppBar(
           showBackButton: false,
-          leading: Container(
-            decoration: DottedDecoration(
-              shape: Shape.line,
-              linePosition: LinePosition.bottom,
-            ),
-            child: Text(
-              'Course',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontSize: 22,
-                fontWeight: bold,
-              ),
-            ),
-          ),
-          content: const Spacer(),
-          trailing: const SearchButton(),
+          title: 'Course',
+          trailing: SearchButton(),
         ),
         body: ListView(
           children: [

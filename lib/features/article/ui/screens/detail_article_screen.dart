@@ -1,3 +1,4 @@
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -210,12 +211,9 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
               ),
             ) : Scaffold(
               backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
-              appBar: isFullScreen ? null : AppBar(
-                backgroundColor: Colors.transparent,
-                leading: IconButton(
-                  icon: const Icon(Icons.keyboard_backspace, size: 32),
-                  onPressed: handleBackNavigation,
-                ),
+              appBar: isFullScreen ? null : CustomAppBar(
+                showBackButton: true,
+                backAction: handleBackNavigation,
               ),
               body : SingleChildScrollView(
                 child: Padding(
