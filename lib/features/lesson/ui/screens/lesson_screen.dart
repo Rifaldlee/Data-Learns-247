@@ -397,7 +397,7 @@ class _LessonScreenState extends State<LessonScreen> {
 
   Widget buildArticleLesson(String content, String title, bool isComplete) {
     final document = parse(content);
-    var elements = document.querySelectorAll('h1,h2,h3,p,ul,ol,figure,figcaption,code');
+    var elements = document.querySelectorAll('h1,h2,h3,p,a,ul,ol,figure,figcaption,code');
 
     return Padding(
       padding: const EdgeInsets.symmetric(

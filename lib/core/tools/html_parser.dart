@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/shared_ui/screens/image_view_screen.dart';
+import 'package:url_launcher/link.dart';
 
 class HtmlContentParser {
   static Widget parseHtml({
@@ -110,28 +111,74 @@ class HtmlContentParser {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: element.getElementsByTagName('li').map((li) {
-            return Row(
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("\t\u2022",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: kBlackColor,
-                    fontSize: 18,
-                    height: 1.6
-                  )
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text(li.text.trim(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "\t\u2022",
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: kBlackColor,
                         fontSize: 18,
-                        height: 1.6
+                        height: 1.6,
                       ),
-                      textAlign: TextAlign.start
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: li.nodes.map((node) {
+                            if (node is dom.Element) {
+                              if (node.localName == 'a') {
+                                final url = node.attributes['href'];
+                                if (url != null) {
+                                  return Link(
+                                    uri: Uri.parse(url),
+                                    target: LinkTarget.blank,
+                                    builder: (BuildContext ctx, FollowLink? openLink) {
+                                      return GestureDetector(
+                                        onTap: openLink,
+                                        child: Text(
+                                          node.text.trim(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                            color: kBlueColor,
+                                            fontSize: 18,
+                                            height: 1.6,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                              } else if (node.localName == 'ul' || node.localName == 'ol') {
+                                return HtmlContentParser.parseHtml(
+                                  element: node,
+                                  context: context,
+                                );
+                              }
+                            } else if (node is dom.Text) {
+                              return Text(
+                                node.text.trim(),
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: kBlackColor,
+                                  fontSize: 18,
+                                  height: 1.6,
+                                ),
+                                textAlign: TextAlign.start,
+                              );
+                            }
+                            return const SizedBox();
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -144,28 +191,74 @@ class HtmlContentParser {
           children: element.getElementsByTagName('li').asMap().entries.map((entry) {
             int index = entry.key;
             var li = entry.value;
-            return Row(
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("\t${index + 1}.",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: kBlackColor,
-                    fontSize: 18,
-                    height: 1.6
-                  )
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text(li.text.trim(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "\t${index + 1}.",
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: kBlackColor,
                         fontSize: 18,
-                        height: 1.6
+                        height: 1.6,
                       ),
-                      textAlign: TextAlign.start
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: li.nodes.map((node) {
+                            if (node is dom.Element) {
+                              if (node.localName == 'a') {
+                                final url = node.attributes['href'];
+                                if (url != null) {
+                                  return Link(
+                                    uri: Uri.parse(url),
+                                    target: LinkTarget.blank,
+                                    builder: (BuildContext ctx, FollowLink? openLink) {
+                                      return GestureDetector(
+                                        onTap: openLink,
+                                        child: Text(
+                                          node.text.trim(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                            color: kBlueColor,
+                                            fontSize: 18,
+                                            height: 1.6,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                              } else if (node.localName == 'ul' || node.localName == 'ol') {
+                                return HtmlContentParser.parseHtml(
+                                  element: node,
+                                  context: context,
+                                );
+                              }
+                            } else if (node is dom.Text) {
+                              return Text(
+                                node.text.trim(),
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: kBlackColor,
+                                  fontSize: 18,
+                                  height: 1.6,
+                                ),
+                                textAlign: TextAlign.start,
+                              );
+                            }
+                            return const SizedBox();
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
