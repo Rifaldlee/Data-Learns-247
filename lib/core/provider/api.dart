@@ -5,11 +5,11 @@ class API {
 
   static const search = 'search';
 
-  static const featuredArticles = 'featured-articles';
-  static const recommendedArticles = 'recommended-articles';
-  static const trendingArticles = 'trending-articles';
-  static const listArticles = 'list-articles';
-  static const detailArticle = 'article';
+  static const featuredArticles = 'featured-contents';
+  static const recommendedArticles = 'recommended-contents';
+  static const trendingArticles = 'trending-contents';
+  static const listArticles = 'list-contents';
+  static const detailArticle = 'content';
 
   static const listCourses = 'list-courses';
   static const detailCourse = 'course';
