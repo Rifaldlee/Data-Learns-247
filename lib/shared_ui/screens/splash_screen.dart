@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -42,8 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark
       ),
       child: Scaffold(
         backgroundColor: kBackgroundColor,
@@ -53,20 +52,24 @@ class _SplashScreenState extends State<SplashScreen> {
             Container(
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
-                  color: kBackgroundColor,
-                  image: DecorationImage(
-                      alignment: Alignment.bottomCenter,
-                      image: AssetImage(
-                          "assets/img/splashscreen_bottom_bit.png"))),
+                color: kBackgroundColor,
+                image: DecorationImage(
+                  alignment: Alignment.bottomCenter,
+                  image: AssetImage(
+                    "assets/img/splashscreen_bottom_bit.png")
+                )
+              ),
             ),
             Container(
               width: 300,
               margin: const EdgeInsets.only(bottom: 100),
               decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      alignment: Alignment.center,
-                      image:
-                      AssetImage("assets/img/splashscreen_logo_bit.png"))),
+                image: DecorationImage(
+                  alignment: Alignment.center,
+                  image:
+                  AssetImage("assets/img/splashscreen_logo_bit.png")
+                )
+              ),
             ),
           ],
         ),

@@ -1,11 +1,12 @@
-import 'package:data_learns_247/core/route/page_cubit.dart';
-import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:data_learns_247/core/route/router.dart';
+import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/article_detail_navigation_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/detail_article_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/featured_articles_cubit.dart';
@@ -23,6 +24,11 @@ import 'package:data_learns_247/features/authentication/cubit/user_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/detail_course_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/list_courses_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
+import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
+
+const String appID = "b77e9ec6-1908-4933-bd5c-b11243f99aa3";
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,11 +38,43 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  runApp(const MyApp());
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  OneSignal.initialize(appID);
+  OneSignal.Notifications.requestPermission(true);
+
+  Map<String, dynamic>? notificationData;
+
+  OneSignal.Notifications.addClickListener((event) {
+    final additionalData = event.notification.additionalData;
+    if (additionalData != null) {
+      if (navigatorKey.currentState != null) {
+        _handleNotificationNavigation(additionalData);
+      } else {
+        notificationData = additionalData;
+      }
+    }
+  });
+
+  runApp(MyApp(notificationData: notificationData));
+}
+
+void _handleNotificationNavigation(Map<String, dynamic> notificationData) {
+  final context = navigatorKey.currentState?.context;
+  if (context != null) {
+    if (notificationData["type"] == "article") {
+      final location = '/mainFrontPage/detailArticle/${notificationData["id"]}/${notificationData["has_video"]}';
+      context.push(location);
+    } else if (notificationData["type"] == "course") {
+      final location = '/mainFrontPage/detailCourse/${notificationData["id"]}';
+      context.push(location);
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Map<String, dynamic>? notificationData;
+
+  const MyApp({super.key, this.notificationData});
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +103,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'Data Learn 247',
-        routerConfig: AppRouter(navigatorKey).router,
-      ),
+        routerConfig: AppRouter(navigatorKey, notificationData).router,
+      )
     );
   }
 }
