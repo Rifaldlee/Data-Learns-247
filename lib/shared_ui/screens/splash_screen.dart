@@ -20,21 +20,39 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    _timer = Timer(const Duration(seconds: 2), () {
-      if (SharedPrefUtil.getJwtToken().isNotEmpty) {
-        context.goNamed(RouteConstants.mainFrontPage);
-      }
-      else {
-        context.goNamed(RouteConstants.login);
-      }
-    });
     super.initState();
+    navigateAfterSplash();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void navigateAfterSplash() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (SharedPrefUtil.hasNotificationData()) {
+      final notificationData = SharedPrefUtil.getNotificationData();
+
+      await SharedPrefUtil.clearNotificationData();
+
+      if (notificationData != null) {
+        if (notificationData['type'] == 'article') {
+          context.push('/mainFrontPage/detailArticle/${notificationData['id']}/${notificationData['has_video']}');
+        } else if (notificationData['type'] == 'course') {
+          context.push('/mainFrontPage/detailCourse/${notificationData['id']}');
+        }
+        return;
+      }
+    }
+
+    if (SharedPrefUtil.getJwtToken().isNotEmpty) {
+      context.goNamed(RouteConstants.mainFrontPage);
+    } else {
+      context.goNamed(RouteConstants.login);
+    }
   }
 
   @override
@@ -55,8 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: kBackgroundColor,
                 image: DecorationImage(
                   alignment: Alignment.bottomCenter,
-                  image: AssetImage(
-                    "assets/img/splashscreen_bottom_bit.png")
+                  image: AssetImage("assets/img/splashscreen_bottom_bit.png")
                 )
               ),
             ),

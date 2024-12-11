@@ -1,3 +1,4 @@
+import 'package:data_learns_247/core/tools/shared_pref_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,39 +43,19 @@ void main() async {
   OneSignal.initialize(appID);
   OneSignal.Notifications.requestPermission(true);
 
-  Map<String, dynamic>? notificationData;
-
   OneSignal.Notifications.addClickListener((event) {
     final additionalData = event.notification.additionalData;
     if (additionalData != null) {
-      if (navigatorKey.currentState != null) {
-        _handleNotificationNavigation(additionalData);
-      } else {
-        notificationData = additionalData;
-      }
+      // Simpan data notifikasi ke SharedPreferences
+      SharedPrefUtil.storeNotificationData(additionalData);
     }
   });
 
-  runApp(MyApp(notificationData: notificationData));
-}
-
-void _handleNotificationNavigation(Map<String, dynamic> notificationData) {
-  final context = navigatorKey.currentState?.context;
-  if (context != null) {
-    if (notificationData["type"] == "article") {
-      final location = '/mainFrontPage/detailArticle/${notificationData["id"]}/${notificationData["has_video"]}';
-      context.push(location);
-    } else if (notificationData["type"] == "course") {
-      final location = '/mainFrontPage/detailCourse/${notificationData["id"]}';
-      context.push(location);
-    }
-  }
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final Map<String, dynamic>? notificationData;
-
-  const MyApp({super.key, this.notificationData});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +84,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'Data Learn 247',
-        routerConfig: AppRouter(navigatorKey, notificationData).router,
+        routerConfig: AppRouter(navigatorKey).router,
       )
     );
   }

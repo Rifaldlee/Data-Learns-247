@@ -15,13 +15,11 @@ import 'package:data_learns_247/shared_ui/screens/splash_screen.dart';
 
 class AppRouter {
   final GlobalKey<NavigatorState> globalNavigatorKey;
-  final Map<String, dynamic>? notificationData;
   late final GoRouter router;
 
-  AppRouter(this.globalNavigatorKey, this.notificationData) {
+  AppRouter(this.globalNavigatorKey) {
     router = GoRouter(
       navigatorKey: globalNavigatorKey,
-      initialLocation: _setInitialLocation(),
       routes: [
         GoRoute(
           name: RouteConstants.splash,
@@ -112,15 +110,5 @@ class AppRouter {
         ),
       ],
     );
-  }
-  String _setInitialLocation() {
-    if (notificationData != null) {
-      if (notificationData!["type"] == "article") {
-        return '/mainFrontPage/detailArticle/${notificationData!["id"]}/${notificationData!["has_video"]}';
-      } else if (notificationData!["type"] == "course") {
-        return '/mainFrontPage/detailCourse/${notificationData!["id"]}';
-      }
-    }
-    return '/';
   }
 }
