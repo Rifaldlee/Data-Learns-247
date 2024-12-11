@@ -344,14 +344,19 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
 
   Widget articleContent(String content) {
     final document = parse(content);
-    document.getElementsByClassName('article-shortcode').forEach((element) => element.remove());
-    var elements = document.querySelectorAll('h1,h2,h3,p,ul,ol,figure,figcaption,code');
+
+    var descriptionElement = document.getElementById('--description');
+    if (descriptionElement == null) {
+      return const SizedBox();
+    }
+
     return Column(
-      children: elements.map((e) {
-        return HtmlContentParser.parseHtml(element: e, context: context);
+      children: descriptionElement.children.map((child) {
+        return HtmlContentParser.parseHtml(element: child, context: context);
       }).whereType<Widget>().toList(),
     );
   }
+
 
   Widget articleListLink(Article detailArticle) {
     return Column(

@@ -353,6 +353,15 @@ class HtmlContentParser {
         }
 
       case 'div':
+        if (element.id == '--description') {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: element.children.map((child) {
+              return HtmlContentParser.parseHtml(element: child, context: context);
+            }).whereType<Widget>().toList(),
+          );
+        }
+
         if (element.classes.contains('llms-meta-info')) {
           var metaTitle = element.getElementsByTagName('h3').where((h3) => h3.classes.contains('llms-meta-title'));
           return Padding(

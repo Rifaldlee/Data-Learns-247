@@ -27,8 +27,6 @@ import 'package:data_learns_247/features/course/cubit/list_courses_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
 
-const String appID = "b77e9ec6-1908-4933-bd5c-b11243f99aa3";
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -40,13 +38,12 @@ void main() async {
   ]);
 
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize(appID);
+  OneSignal.initialize("b77e9ec6-1908-4933-bd5c-b11243f99aa3");
   OneSignal.Notifications.requestPermission(true);
 
   OneSignal.Notifications.addClickListener((event) {
     final additionalData = event.notification.additionalData;
     if (additionalData != null) {
-      // Simpan data notifikasi ke SharedPreferences
       SharedPrefUtil.storeNotificationData(additionalData);
     }
   });
