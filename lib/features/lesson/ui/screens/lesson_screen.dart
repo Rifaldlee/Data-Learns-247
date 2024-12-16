@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:url_launcher/link.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:html/parser.dart';
 import 'package:go_router/go_router.dart';
@@ -181,6 +182,21 @@ class _LessonScreenState extends State<LessonScreen> {
                     },
                   );
                 },
+                trailing: Builder(
+                  builder: (context) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Scaffold.of(context).openEndDrawer();
+                          },
+                          child: const Icon(Icons.menu),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
               endDrawer: Drawer(
                 child: BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
@@ -207,7 +223,10 @@ class _LessonScreenState extends State<LessonScreen> {
                       isComplete
                     )
                   ),
-                  if (!isFullScreen) lessonBottomNavBar(state.lesson)
+                  if (!isFullScreen) lessonBottomNavBar(
+                    state.lesson,
+                    state.lesson.lessonType.toString()
+                  )
                 ],
               )
             ),
@@ -229,7 +248,9 @@ class _LessonScreenState extends State<LessonScreen> {
       case 'pdf':
         return buildPdfLesson(content, title, isComplete);
       case 'article':
-        return SingleChildScrollView(child: buildArticleLesson(content, title, isComplete));
+        return buildArticleLesson(content, title, isComplete);
+      case 'quiz':
+        return buildQuizLesson(content);
       default:
         return const Center(child: Text('Unsupported lesson type'));
     }
@@ -397,33 +418,92 @@ class _LessonScreenState extends State<LessonScreen> {
 
   Widget buildArticleLesson(String content, String title, bool isComplete) {
     final document = parse(content);
-    var elements = document.querySelectorAll('h1,h2,h3,p,a,ul,ol,figure,figcaption,code');
+    var elements = document.body?.children ?? [];
 
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 16,
         horizontal: 32,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SingleChildScrollView(
-            child: Column(
+            Column(
               children: elements.map((e) {
                 return HtmlContentParser.parseHtml(element: e, context: context);
               }).whereType<Widget>().toList(),
             ),
-          ),
-          finishLessonButton(isComplete, 'article')
-        ],
+            finishLessonButton(isComplete, 'article')
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget buildQuizLesson(String content) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Image(
+          image: AssetImage("assets/img/img_ill_2.png")
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 24,
+            horizontal: 26
+          ),
+          child: Column(
+            children: [
+              Text(
+                'Quiz hanya dapat diakses melalui website data learns',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(color: kBlackColor)
+              ),
+              const SizedBox(height: 28),
+              Text(
+                'Silahkan menuju website data learns untuk memulai mengerjakan quiz melalui link berikut ini:',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: kBlackColor)
+              ),
+            ],
+          ),
+        ),
+        Link(
+          uri: Uri.parse(content),
+          target: LinkTarget.blank,
+          builder: (BuildContext ctx, FollowLink? openLink) {
+            return GestureDetector(
+              onTap: openLink,
+              child: Text(
+                'Link menuju quiz',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(
+                  color: kBlueColor,
+                  fontSize: 18,
+                  height: 1.6,
+                ),
+              ),
+            );
+          },
+        )
+      ],
     );
   }
 
@@ -550,7 +630,7 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  Widget lessonBottomNavBar(Lesson lesson) {
+  Widget lessonBottomNavBar(Lesson lesson, String type) {
     final titleDoc = parse(lesson.title!);
     var title = titleDoc.querySelector('a')?.text;
 
@@ -601,7 +681,7 @@ class _LessonScreenState extends State<LessonScreen> {
           if (lesson.nextLesson != 0)
             GestureDetector(
               onTap: () {
-                if (!lesson.isComplete!) {
+                if (!lesson.isComplete! && lesson.lessonType != 'youtube') {
                   context.read<FinishLessonCubit>().finishLesson(widget.id);
                 }
                 context.pushNamed(
@@ -628,7 +708,26 @@ class _LessonScreenState extends State<LessonScreen> {
               ),
             ),
           if (lesson.nextLesson == 0)
-            const Text('finish')
+            GestureDetector(
+              onTap: () {
+                if (!lesson.isComplete!  && lesson.lessonType != 'youtube') {
+                  context.read<FinishLessonCubit>().finishLesson(widget.id);
+                  context.pushNamed(
+                    RouteConstants.listLessons,
+                    pathParameters: {
+                      'id': widget.courseId.toString(),
+                    },
+                  );
+                }
+                context.pushNamed(
+                  RouteConstants.listLessons,
+                  pathParameters: {
+                    'id': widget.courseId.toString(),
+                  },
+                );
+              },
+              child: const Text('finish')
+            )
         ],
       ),
     );

@@ -1,5 +1,5 @@
+import 'package:data_learns_247/core/theme/color.dart';
 import 'package:flutter/material.dart';
-import 'package:html/parser.dart';
 import 'package:data_learns_247/features/article/data/models/list_link_model.dart';
 
 class LinkArticleItem extends StatelessWidget {
@@ -13,6 +13,7 @@ class LinkArticleItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
+        color: kWhiteColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),

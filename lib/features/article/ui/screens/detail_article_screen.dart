@@ -150,7 +150,6 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    // Resume playback if it was playing before
     Future.delayed(const Duration(milliseconds: 300), () {
       if (wasPlayingBeforeTransition && ytController != null) {
         ytController!.play();
@@ -169,7 +168,6 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    // Resume playback if it was playing before
     Future.delayed(const Duration(milliseconds: 300), () {
       if (wasPlayingBeforeTransition && ytController != null) {
         ytController!.play();

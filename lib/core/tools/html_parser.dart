@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/link.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/shared_ui/screens/image_view_screen.dart';
-import 'package:url_launcher/link.dart';
 
 class HtmlContentParser {
   static Widget parseHtml({
@@ -300,10 +300,9 @@ class HtmlContentParser {
           child: Center(
             child: Text(
               element.text.trim(),
-              style: Theme.of(context)
-                .textTheme
-                .labelMedium
-                ?.copyWith(color: kLightGreyColor),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: kLightGreyColor
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -334,7 +333,9 @@ class HtmlContentParser {
                 child: Text(
                   element.text,
                   style: GoogleFonts.sourceCodePro(
-                    color: kBlackColor, fontSize: 14),
+                    color: kBlackColor,
+                    fontSize: 14
+                  ),
                 ),
               ),
             ),
@@ -345,10 +346,9 @@ class HtmlContentParser {
         if (element.classes.contains('lifterlms-price')) {
           return Text(
             element.text.trim(),
-            style: Theme.of(context)
-              .textTheme
-              .labelLarge
-              ?.copyWith(color: kBlackColor)
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: kBlackColor
+            )
           );
         }
 
@@ -357,7 +357,10 @@ class HtmlContentParser {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: element.children.map((child) {
-              return HtmlContentParser.parseHtml(element: child, context: context);
+              return HtmlContentParser.parseHtml(
+                element: child,
+                context: context
+              );
             }).whereType<Widget>().toList(),
           );
         }
@@ -368,10 +371,7 @@ class HtmlContentParser {
             padding: const EdgeInsets.only(top: 16),
             child: Text(
               metaTitle.first.text.trim(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: kBlackColor,
                 fontWeight: bold,
               ),
@@ -384,12 +384,12 @@ class HtmlContentParser {
           return Padding(
             padding: (padding == null) ? const EdgeInsets.only(top: 16) : padding,
             child: Text(metaDifficulty.first.text.trim(),
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: kBlackColor,
-                  fontSize: 18,
-                  height: 1.6
-                ),
-                textAlign: TextAlign.start
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: kBlackColor,
+                fontSize: 18,
+                height: 1.6
+              ),
+              textAlign: TextAlign.start
             ),
           );
         }
@@ -398,8 +398,8 @@ class HtmlContentParser {
           return Padding(
             padding: padding ?? const EdgeInsets.only(top: 8),
             child: parseHtml(
-                element: element.children.first,
-                context: context
+              element: element.children.first,
+              context: context
             ),
           );
         }
