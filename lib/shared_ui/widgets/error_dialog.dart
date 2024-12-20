@@ -41,10 +41,11 @@ class ErrorDialog extends StatelessWidget {
                     Text(
                       message,
                       style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(color: kBlackColor),
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(color: kBlackColor),
                       textAlign: TextAlign.center,
+                      maxLines: 4,
                     ),
                     TextButton(
                       onPressed: onClose,
@@ -55,15 +56,15 @@ class ErrorDialog extends StatelessWidget {
                         ),
                         backgroundColor: kRedColor,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)
+                          borderRadius: BorderRadius.circular(8)
                         ),
                       ),
                       child: Text(
                         'Close',
                         style: Theme.of(context)
-                            .textTheme
-                            .labelLarge
-                            ?.copyWith(color: kWhiteColor),
+                          .textTheme
+                          .labelLarge
+                          ?.copyWith(color: kWhiteColor),
                         textAlign: TextAlign.center,
                       ),
                     ),

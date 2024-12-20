@@ -9,4 +9,5 @@ class RouteConstants {
   static String searchScreen = 'search-screen';
   static String searchResult = 'search_result';
   static String lessonScreen = 'lesson-screen';
+  static String detailReels = 'detail-reels';
 }

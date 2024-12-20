@@ -19,6 +19,9 @@ class API {
   static const lesson = 'lesson';
   static const finishLesson = 'lessons/finish';
 
+  static const listReels = 'list-reels';
+  static const detailReels = 'reels';
+
   static const login = '?rest_route=/api-login/v1/auth';
   static const register = 'users/register';
   static String user(String id) => 'users/$id';

@@ -1,3 +1,4 @@
+import 'package:data_learns_247/features/reels/ui/screens/detail_reels_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -106,6 +107,14 @@ class AppRouter {
                 ),
               ],
             ),
+            GoRoute(
+              name: RouteConstants.detailReels,
+              path: '/detailReels/:id',
+              pageBuilder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return MaterialPage(child: DetailReelsScreen(id: id));
+              }
+            )
           ],
         ),
       ],
