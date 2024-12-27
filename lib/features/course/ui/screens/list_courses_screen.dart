@@ -1,8 +1,6 @@
-import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/features/course/ui/widgets/placeholder/list_course_placeholder.dart';
 import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
-import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
