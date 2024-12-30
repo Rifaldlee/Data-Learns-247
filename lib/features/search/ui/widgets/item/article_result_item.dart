@@ -6,9 +6,9 @@ import 'package:data_learns_247/features/search/data/models/search_model.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 
 class ArticleResultItem extends StatelessWidget {
-  final Articles articles;
+  final Contents contents;
   final Function() onTap;
-  const ArticleResultItem({super.key, required this.articles, required this.onTap});
+  const ArticleResultItem({super.key, required this.contents, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class ArticleResultItem extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: FastCachedImage(
-                  url: articles.thumbnail!,
+                  url: contents.thumbnail!,
                   height: 74,
                   width: 94,
                   fit: BoxFit.cover,
@@ -44,7 +44,7 @@ class ArticleResultItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      unescape.convert(articles.title ?? "No Title"),
+                      unescape.convert(contents.title ?? "No Title"),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

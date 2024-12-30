@@ -18,7 +18,7 @@ class SearchCubit extends Cubit<SearchState> {
 
       SearchResult? searchResult = await GetSearchData(query, _searchRepository).call();
 
-      if (searchResult != null && ((searchResult.articles!.isNotEmpty) || (searchResult.courses!.isNotEmpty))) {
+      if (searchResult != null && ((searchResult.contents!.isNotEmpty) || (searchResult.courses!.isNotEmpty))) {
         emit(SearchCompleted(searchResult));
       } else {
         emit(SearchEmpty());

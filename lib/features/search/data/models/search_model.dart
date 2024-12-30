@@ -1,14 +1,14 @@
 class SearchResult {
-  List<Articles>? articles;
+  List<Contents>? contents;
   List<Courses>? courses;
 
-  SearchResult({articles,courses});
+  SearchResult({contents,courses});
 
   SearchResult.fromJson(Map<String, dynamic> json) {
-    if (json['articles'] != null) {
-      articles = <Articles>[];
-      json['articles'].forEach((v) {
-        articles!.add(Articles.fromJson(v));
+    if (json['contents'] != null) {
+      contents = <Contents>[];
+      json['contents'].forEach((v) {
+        contents!.add(Contents.fromJson(v));
       });
     }
     if (json['courses'] != null) {
@@ -21,8 +21,8 @@ class SearchResult {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (articles != null) {
-      data['articles'] =articles!.map((v) => v.toJson()).toList();
+    if (contents != null) {
+      data['contents'] =contents!.map((v) => v.toJson()).toList();
     }
     if (courses != null) {
       data['courses'] =courses!.map((v) => v.toJson()).toList();
@@ -31,14 +31,14 @@ class SearchResult {
   }
 }
 
-class Articles {
+class Contents {
   int? id;
   String? title;
   String? permalink;
   String? thumbnail;
   bool? hasVideo;
 
-  Articles({
+  Contents({
     this.id,
     this.title,
     this.permalink,
@@ -46,7 +46,7 @@ class Articles {
     this.hasVideo
   });
 
-  Articles.fromJson(Map<String, dynamic> json) {
+  Contents.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     permalink = json['permalink'];

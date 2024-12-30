@@ -97,15 +97,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget resultArticle(SearchResult searchResult) {
     return Column(
-      children: searchResult.articles!.map((Articles articles) {
+      children: searchResult.contents!.map((Contents contents) {
         return ArticleResultItem(
-          articles: articles,
+          contents: contents,
           onTap: () {
             context.pushNamed(
               RouteConstants.detailArticle,
               pathParameters: {
-                'id': articles.id?.toString() ?? '0',
-                'has_video': (articles.hasVideo ?? false).toString(),
+                'id': contents.id?.toString() ?? '0',
+                'has_video': (contents.hasVideo ?? false).toString(),
               }
             );
           }
