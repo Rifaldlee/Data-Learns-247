@@ -125,7 +125,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   fieldName: "Username",
                                   hintText: "Username",
                                   controller: _userNameController,
-                                  textInputType: TextInputType.number,
                                   margin: const EdgeInsets.only(bottom: 20)
                               ),
                               CustomFormField(
@@ -193,7 +192,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       borderRadius: BorderRadius.circular(12),
                                     );
-                                    context.pushNamed(RouteConstants.login);
+                                    Future.delayed(const Duration(seconds: 1), () {
+                                      context.pushNamed(RouteConstants.login);
+                                    });
                                   } else if (state is RegisterError) {
                                     toastification.show(
                                       context: context,
