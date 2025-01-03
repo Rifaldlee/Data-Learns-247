@@ -1,13 +1,12 @@
-import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
+import 'package:data_learns_247/core/theme/theme.dart';
+import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
+import 'package:data_learns_247/features/reels/ui/widgets/item/video_grid_item.dart';
 import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:html_unescape/html_unescape.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/article/cubit/featured_articles_cubit.dart';
@@ -20,10 +19,9 @@ import 'package:data_learns_247/features/article/ui/widgets/item/card_article_it
 import 'package:data_learns_247/features/article/ui/widgets/item/clip_article_item.dart';
 import 'package:data_learns_247/features/article/ui/widgets/item/simple_article_item.dart';
 import 'package:data_learns_247/features/article/ui/widgets/placeholder/card_article_item_placeholder.dart';
-import 'package:data_learns_247/features/article/ui/widgets/placeholder/leading_article_placeholder.dart';
 import 'package:data_learns_247/features/article/ui/widgets/placeholder/simple_article_item_placeholder.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
-import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
+import 'package:video_player/video_player.dart';
 
 class ListArticlesScreen extends StatefulWidget {
   const ListArticlesScreen({super.key});
@@ -33,12 +31,20 @@ class ListArticlesScreen extends StatefulWidget {
 }
 
 class _ListArticlesScreenState extends State<ListArticlesScreen> {
+  VideoPlayerController? controller;
   bool listArticleError = false;
+  bool isScrolled = true;
 
   @override
   void initState() {
     super.initState();
     fetchArticles();
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 
   void fetchArticles() {
@@ -47,6 +53,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
     context.read<RecommendedArticlesCubit>().fetchRecommendedArticles();
     context.read<TrendingArticlesCubit>().fetchTrendingArticles();
     context.read<RandomArticleCubit>().fetchRandomArticle();
+    context.read<ListReelsCubit>().fetchListReels();
   }
 
   void showErrorDialog(String message) {
@@ -68,126 +75,93 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController scrollController = ScrollController();
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: kWhiteColor,
-        statusBarIconBrightness: Brightness.dark
+      value: SystemUiOverlayStyle(
+        statusBarColor: isScrolled ? Colors.transparent : kWhiteColor,
+        statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: kWhiteColor,
-        appBar: const CustomAppBar(
-          showBackButton: false,
-          title: 'Article',
-          trailing: SearchButton(),
-        ),
-        body: ListView(
+        body: Stack(
           children: [
-            leadingArticle(),
-            featured(),
-            const SizedBox(height: 16),
-            clipArticle(),
-            trending(),
-            const SizedBox(height: 16),
-            listArticleCard(),
-            recommended(),
+            Container(
+              width: double.infinity,
+              height: 180 + MediaQuery.of(context).viewPadding.top,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/img/hero-img.jpg"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            NotificationListener<ScrollUpdateNotification>(
+              onNotification: (notif) {
+                if (scrollController.position.pixels > 180.0) {
+                  setState(() {
+                    isScrolled = false;
+                  });
+                } else if (scrollController.position.pixels < 135.0) {
+                  setState(() {
+                    isScrolled = true;
+                  });
+                }
+                return true;
+              },
+              child: LayoutBuilder(
+                builder: (context, constraint) {
+                  return ListView(
+                    controller: scrollController,
+                    padding: EdgeInsets.only(
+                      top: 160 + MediaQuery.of(context).viewPadding.top,
+                    ),
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: const BoxDecoration(
+                          color: kWhiteColor,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                titleGroup('For you'),
+                                const Spacer(),
+                                const Expanded(
+                                  flex: 2,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 16),
+                                    child: SearchButton(),
+                                  )
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            listArticleCard(),
+                            featured(),
+                            const SizedBox(height: 16),
+                            clipArticle(),
+                            trending(),
+                            titleGroup('Shorts'),
+                            reels(),
+                            const SizedBox(height: 16),
+                            recommended(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget leadingArticle() {
-    final unescape = HtmlUnescape();
-
-    return BlocBuilder<RandomArticleCubit, RandomArticleState>(
-      builder: (context, state) {
-        if (state is RandomArticleLoading) {
-          return const LeadingArticlePlaceHolder();
-        } else if (state is RandomArticleCompleted) {
-          return GestureDetector(
-            onTap: () {
-              context.pushNamed(
-                RouteConstants.detailArticle,
-                pathParameters: {
-                  'id': state.randomArticle.id.toString(),
-                  'has_video': (state.randomArticle.hasVideo ?? false).toString(),
-                }
-              );
-            },
-            child: Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.only(bottom: 8),
-              decoration: DottedDecoration(
-                linePosition: LinePosition.bottom,
-                strokeWidth: 2
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FastCachedImage(
-                    url: state.randomArticle.image,
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    fadeInDuration: const Duration(seconds: 0),
-                    loadingBuilder: (context, progress) {
-                      return const RectangleShimmerSizedBox(
-                        height: 200,
-                        width: double.infinity
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.randomArticle.blockGroup,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Text(
-                          unescape.convert(state.randomArticle.title),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSerifText(
-                            textStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                            )
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          state.randomArticle.dateCreated,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          );
-        } else if (state is RandomArticleError) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!listArticleError) {
-              setState(() {
-                listArticleError = true;
-              });
-              showErrorDialog(state.message);
-            }
-          });
-        }
-        return const SizedBox.shrink();
-      }
     );
   }
 
@@ -241,7 +215,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
           );
         } else if (state is ListArticlesCompleted) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
             scrollDirection: Axis.horizontal,
             child: Row(
               children: state.listArticles.map(
@@ -282,36 +256,42 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
           return const SimpleArticleItemPlaceholder();
         } else if (state is FeaturedArticlesCompleted) {
           return Column(
-            children: state.listArticles.asMap().entries.map(
-              (entry) {
-                final listArticles = entry.value;
-                return Column(
-                  children: [
-                    SimpleArticleItem(
-                      listArticles: listArticles,
-                      onTap: () {
-                        context.pushNamed(
-                          RouteConstants.detailArticle,
-                          pathParameters: {
-                            'id': listArticles.id?.toString() ?? '0',
-                            'has_video': (listArticles.hasVideo ?? false).toString(),
-                          }
-                        );
-                      },
-                    ),
-                    if (entry.key != state.listArticles.length - 1)
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: DottedDecoration(
-                          linePosition: LinePosition.bottom,
-                          strokeWidth: 2,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleGroup(state.listArticles[0].blockGroup.toString()),
+              Column(
+                children: state.listArticles.asMap().entries.map(
+                  (entry) {
+                    final listArticles = entry.value;
+                    return Column(
+                      children: [
+                        SimpleArticleItem(
+                          listArticles: listArticles,
+                          onTap: () {
+                            context.pushNamed(
+                              RouteConstants.detailArticle,
+                              pathParameters: {
+                                'id': listArticles.id?.toString() ?? '0',
+                                'has_video': (listArticles.hasVideo ?? false).toString(),
+                              }
+                            );
+                          },
                         ),
-                      )
-                  ],
-                );
-              }
-            ).toList()
+                        if (entry.key != state.listArticles.length - 1)
+                          Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: DottedDecoration(
+                              linePosition: LinePosition.bottom,
+                              strokeWidth: 2,
+                            ),
+                          )
+                      ],
+                    );
+                  }
+                ).toList()
+              ),
+            ],
           );
         } else if (state is FeaturedArticlesError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -335,36 +315,42 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
           return const SimpleArticleItemPlaceholder();
         } else if (state is RecommendedArticlesCompleted) {
           return Column(
-            children: state.listArticles.asMap().entries.map(
-              (entry) {
-                final listArticles = entry.value;
-                return Column(
-                  children: [
-                    SimpleArticleItem(
-                      listArticles: listArticles,
-                      onTap: () {
-                        context.pushNamed(
-                          RouteConstants.detailArticle,
-                          pathParameters: {
-                            'id': listArticles.id?.toString() ?? '0',
-                            'has_video': (listArticles.hasVideo ?? false).toString(),
-                          }
-                        );
-                      },
-                    ),
-                    if (entry.key != state.listArticles.length - 1)
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: DottedDecoration(
-                          linePosition: LinePosition.bottom,
-                          strokeWidth: 2,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleGroup(state.listArticles[0].blockGroup.toString()),
+              Column(
+                children: state.listArticles.asMap().entries.map(
+                  (entry) {
+                    final listArticles = entry.value;
+                    return Column(
+                      children: [
+                        SimpleArticleItem(
+                          listArticles: listArticles,
+                          onTap: () {
+                            context.pushNamed(
+                              RouteConstants.detailArticle,
+                              pathParameters: {
+                                'id': listArticles.id?.toString() ?? '0',
+                                'has_video': (listArticles.hasVideo ?? false).toString(),
+                              }
+                            );
+                          },
                         ),
-                      )
-                  ],
-                );
-              }
-            ).toList()
+                        if (entry.key != state.listArticles.length - 1)
+                          Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: DottedDecoration(
+                              linePosition: LinePosition.bottom,
+                              strokeWidth: 2,
+                            ),
+                          )
+                      ],
+                    );
+                  }
+                ).toList()
+              ),
+            ],
           );
         } else if (state is RecommendedArticlesError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -388,36 +374,42 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
           return const SimpleArticleItemPlaceholder();
         } else if (state is TrendingArticlesCompleted) {
           return Column(
-            children: state.listArticles.asMap().entries.map(
-              (entry) {
-                final listArticles = entry.value;
-                return Column(
-                  children: [
-                    SimpleArticleItem(
-                      listArticles: listArticles,
-                      onTap: () {
-                        context.pushNamed(
-                          RouteConstants.detailArticle,
-                          pathParameters: {
-                            'id': listArticles.id?.toString() ?? '0',
-                            'has_video': (listArticles.hasVideo ?? false).toString(),
-                          }
-                        );
-                      },
-                    ),
-                    if (entry.key != state.listArticles.length - 1)
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: DottedDecoration(
-                          linePosition: LinePosition.bottom,
-                          strokeWidth: 2,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleGroup(state.listArticles[0].blockGroup.toString()),
+              Column(
+                children: state.listArticles.asMap().entries.map(
+                  (entry) {
+                    final listArticles = entry.value;
+                    return Column(
+                      children: [
+                        SimpleArticleItem(
+                          listArticles: listArticles,
+                          onTap: () {
+                            context.pushNamed(
+                              RouteConstants.detailArticle,
+                              pathParameters: {
+                                'id': listArticles.id?.toString() ?? '0',
+                                'has_video': (listArticles.hasVideo ?? false).toString(),
+                              }
+                            );
+                          },
                         ),
-                      )
-                  ],
-                );
-              }
-            ).toList()
+                        if (entry.key != state.listArticles.length - 1)
+                          Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: DottedDecoration(
+                              linePosition: LinePosition.bottom,
+                              strokeWidth: 2,
+                            ),
+                          )
+                      ],
+                    );
+                  }
+                ).toList()
+              ),
+            ],
           );
         } else if (state is TrendingArticlesError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -431,6 +423,78 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
         }
         return const SizedBox.shrink();
       },
+    );
+  }
+
+  Widget reels() {
+    return BlocBuilder<ListReelsCubit, ListReelsState>(
+      builder: (context, state) {
+        if (state is ListReelsLoading) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: kGreenColor,
+            ),
+          );
+        } else if (state is ListReelsCompleted) {
+          final randomReels = state.listReels.toList()..shuffle();
+          final limitedRandomReels = randomReels.take(4).toList();
+
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 0.7,
+              ),
+              itemCount: limitedRandomReels.length,
+              itemBuilder: (context, index) {
+                final listReels = limitedRandomReels[index];
+                return GestureDetector(
+                  onTap: () {
+                    context.pushNamed(
+                      RouteConstants.detailReels,
+                      pathParameters: {'id': listReels.id?.toString() ?? '0'},
+                    );
+                  },
+                  child: VideoGridItem(
+                    videoUrl: listReels.videoUrl!,
+                    title: listReels.title!,
+                  ),
+                );
+              },
+            ),
+          );
+        } else if (state is ListReelsError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showErrorDialog(state.message);
+          });
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget titleGroup(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Container(
+        decoration: DottedDecoration(
+          shape: Shape.line,
+          linePosition: LinePosition.bottom,
+          color: kBlackColor
+        ),
+        child: Text(
+          title,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            fontSize: 22,
+            fontWeight: bold,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -22,10 +22,10 @@ class SearchResult {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (contents != null) {
-      data['contents'] =contents!.map((v) => v.toJson()).toList();
+      data['contents'] = contents!.map((v) => v.toJson()).toList();
     }
     if (courses != null) {
-      data['courses'] =courses!.map((v) => v.toJson()).toList();
+      data['courses'] = courses!.map((v) => v.toJson()).toList();
     }
     return data;
   }

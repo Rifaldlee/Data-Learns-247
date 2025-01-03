@@ -1,4 +1,3 @@
-import 'package:data_learns_247/features/reels/ui/screens/list_reels_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,8 +32,7 @@ class _MainFrontPageState extends State<MainFrontPage> {
             Widget activeTab = const ListArticlesScreen();
             if (selectedTabIndex == 1) activeTab = const ListCoursesScreen();
             if (selectedTabIndex == 2) activeTab = const MyCoursesListScreen();
-            if (selectedTabIndex == 3) activeTab = const ListReelsScreen();
-            if (selectedTabIndex == 4) activeTab = const ProfileScreen();
+            if (selectedTabIndex == 3) activeTab = const ProfileScreen();
 
             return activeTab;
           },
@@ -52,9 +50,9 @@ class _MainFrontPageState extends State<MainFrontPage> {
           items: [
             BottomNavigationBarItem(
               icon: context.read<PageCubit>().state == 0
-                ? const Icon(Icons.article)
-                : const Icon(Icons.article_outlined),
-              label: 'Article',
+                ? const Icon(Icons.home_filled)
+                : const Icon(Icons.home_outlined),
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: context.read<PageCubit>().state == 1
@@ -70,12 +68,6 @@ class _MainFrontPageState extends State<MainFrontPage> {
             ),
             BottomNavigationBarItem(
               icon: context.read<PageCubit>().state == 3
-                ? const Icon(Icons.local_movies)
-                : const Icon(Icons.local_movies_outlined),
-              label: 'Short',
-            ),
-            BottomNavigationBarItem(
-              icon: context.read<PageCubit>().state == 4
                 ? const Icon(Icons.person)
                 : const Icon(Icons.person_outline),
               label: 'Profile',

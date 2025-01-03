@@ -192,7 +192,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       borderRadius: BorderRadius.circular(12),
                                     );
-                                    Future.delayed(const Duration(seconds: 1), () {
+                                    Future.delayed(const Duration(milliseconds: 500), () {
                                       context.pushNamed(RouteConstants.login);
                                     });
                                   } else if (state is RegisterError) {

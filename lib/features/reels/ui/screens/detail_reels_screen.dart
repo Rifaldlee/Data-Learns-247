@@ -83,10 +83,20 @@ class _DetailReelsScreenState extends State<DetailReelsScreen> {
                     itemCount: reelsList.length + 1,
                     itemBuilder: (context, index) {
                       if (index == 0) {
-                        return VideoWidget(videoUrl: detailVideo.videoUrl);
+                        return VideoWidget(
+                          videoUrl: detailVideo.videoUrl,
+                          title: detailVideo.title!,
+                          authorName: detailVideo.fieldDisplayName!,
+                          authorPicture: detailVideo.userPicture!,
+                        );
                       } else {
                         final reel = reelsList[index - 1];
-                        return VideoWidget(videoUrl: reel.videoUrl);
+                        return VideoWidget(
+                          videoUrl: reel.videoUrl,
+                          title: reel.title!,
+                          authorName: reel.author!,
+                          authorPicture: reel.authorPhoto!,
+                        );
                       }
                     },
                   );

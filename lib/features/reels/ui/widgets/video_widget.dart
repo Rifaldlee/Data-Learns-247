@@ -4,8 +4,17 @@ import 'package:video_player/video_player.dart';
 
 class VideoWidget extends StatefulWidget {
   final String? videoUrl;
+  final String title;
+  final String authorName;
+  final String authorPicture;
 
-  const VideoWidget({super.key, required this.videoUrl});
+  const VideoWidget({
+    super.key,
+    required this.videoUrl,
+    required this.title,
+    required this.authorName,
+    required this.authorPicture
+  });
 
   @override
   State<VideoWidget> createState() => _VideoWidgetState();
@@ -66,6 +75,50 @@ class _VideoWidgetState extends State<VideoWidget> {
                 color: Colors.white.withOpacity(0.7),
               ),
             ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 4,
+                horizontal: 12
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundImage: NetworkImage(widget.authorPicture),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        widget.authorName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                          .textTheme
+                          .labelLarge
+                          ?.copyWith(color: kWhiteColor),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    widget.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context)
+                      .textTheme
+                      .labelLarge
+                      ?.copyWith(color: kWhiteColor),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

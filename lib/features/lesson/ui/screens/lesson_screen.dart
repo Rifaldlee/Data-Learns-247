@@ -113,7 +113,7 @@ class _LessonScreenState extends State<LessonScreen> {
       isFullScreen = true;
     });
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
     Future.delayed(const Duration(milliseconds: 300), () {
       if (wasPlayingBeforeTransition && ytController != null) {
@@ -262,10 +262,18 @@ class _LessonScreenState extends State<LessonScreen> {
     }
 
     return SafeArea(
-      child: isFullScreen ? Center(
-        child: FittedBox(
-          fit: BoxFit.fill,
-          child: youtubePlayer(ytController!, isComplete),
+      child: isFullScreen ? PopScope(
+        canPop: true,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
+            onExitFullScreen();
+          }
+        },
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: youtubePlayer(ytController!, isComplete),
+          ),
         ),
       ) : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
