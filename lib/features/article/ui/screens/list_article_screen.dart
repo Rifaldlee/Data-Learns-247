@@ -1,5 +1,6 @@
 import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
+import 'package:data_learns_247/features/reels/data/models/list_reels_model.dart';
 import 'package:data_learns_247/features/reels/ui/widgets/item/video_grid_item.dart';
 import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
@@ -34,6 +35,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
   VideoPlayerController? controller;
   bool listArticleError = false;
   bool isScrolled = true;
+  List<ListReels>? shuffledReels;
 
   @override
   void initState() {
@@ -436,8 +438,8 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
             ),
           );
         } else if (state is ListReelsCompleted) {
-          final randomReels = state.listReels.toList()..shuffle();
-          final limitedRandomReels = randomReels.take(4).toList();
+          shuffledReels ??= state.listReels.toList()..shuffle();
+          final limitedRandomReels = shuffledReels!.take(4).toList();
 
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
