@@ -77,9 +77,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         ),
                       );
                     } else if (state is SearchEmpty) {
-                      return const EmptyScreen(
-                        title: 'Oops! Pencarian tidak ditemukan',
-                        description: 'Sepertinya tidak ada artikel atau pembelajaran yang sesuai. Coba gunakan kata kunci yang berbeda atau perluas pencarian Anda',
+                      return Container(
+                        margin: const EdgeInsets.only(top: 64),
+                        child: const EmptyScreen(
+                          title: 'Oops! Pencarian tidak ditemukan',
+                          description: 'Sepertinya tidak ada artikel atau pembelajaran yang sesuai. Coba gunakan kata kunci yang berbeda atau perluas pencarian Anda',
+                        ),
                       );
                     } else if (state is SearchError) {
                       return Center(child: Text(state.message));

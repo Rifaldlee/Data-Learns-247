@@ -71,38 +71,35 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
           return const ListCoursePlaceholder();
         }
         if (state is ListCoursesCompleted) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Column(
-                children: state.listCourses.asMap().entries.map(
-                  (entry) {
-                    final listCourses = entry.value;
-                    return Column(
-                      children: [
-                        CourseItem(
-                          listCourses: listCourses,
-                          onTap: () {
-                            context.pushNamed(
-                              RouteConstants.detailCourse,
-                              pathParameters: {
-                                'id': listCourses.id?.toString() ?? '0'
-                              }
-                            );
-                          },
-                        ),
-                        if (entry.key != state.listCourses.length - 1)
-                          Container(
-                            width: double.infinity,
-                            height: 0.8,
-                            color: Colors.grey.withOpacity(0.4),
-                          )
-                      ],
-                    );
-                  },
-                ).toList(),
-              ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              children: state.listCourses.asMap().entries.map(
+                (entry) {
+                  final listCourses = entry.value;
+                  return Column(
+                    children: [
+                      CourseItem(
+                        listCourses: listCourses,
+                        onTap: () {
+                          context.pushNamed(
+                            RouteConstants.detailCourse,
+                            pathParameters: {
+                              'id': listCourses.id?.toString() ?? '0'
+                            }
+                          );
+                        },
+                      ),
+                      if (entry.key != state.listCourses.length - 1)
+                        Container(
+                          width: double.infinity,
+                          height: 0.8,
+                          color: Colors.grey.withOpacity(0.4),
+                        )
+                    ],
+                  );
+                },
+              ).toList(),
             ),
           );
         }

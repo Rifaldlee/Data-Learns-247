@@ -3,7 +3,7 @@ import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
 import 'package:data_learns_247/features/course/ui/widgets/item/my_course_item.dart';
 import 'package:data_learns_247/features/course/ui/widgets/placeholder/my_course_list_placeholder.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
+import 'package:data_learns_247/shared_ui/screens/empty_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,20 +25,6 @@ class _MyCoursesListScreenState extends State<MyCoursesListScreen> {
     super.initState();
     context.read<MyCoursesListCubit>().fetchMyCoursesList();
   }
-
-  void showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-        message: message,
-        onClose: () {
-          Navigator.of(context).pop();
-          context.read<MyCoursesListCubit>().fetchMyCoursesList();
-        }
-      )
-    );
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,43 +51,44 @@ class _MyCoursesListScreenState extends State<MyCoursesListScreen> {
           return const MyCourseListPlaceHolder();
         }
         if (state is MyCoursesListCompleted) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children:  state.myCoursesList.asMap().entries.map((entry) {
-                  final myListCourses = entry.value;
-                  return Column(
-                    children: [
-                      MyCourseItem(
-                        myCoursesList: myListCourses,
-                        onTap: () {
-                          context.pushNamed(
-                            RouteConstants.listLessons,
-                            pathParameters: {
-                              'id': myListCourses.id?.toString() ?? '0'
-                            }
-                          );
-                        },
-                      ),
-                      if (entry.key != state.myCoursesList.length - 1)
-                        Container(
-                          width: double.infinity,
-                          height: 0.8,
-                          color: Colors.grey.withOpacity(0.4),
-                        )
-                    ],
-                  );
-                }).toList(),
-              ),
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children:  state.myCoursesList.asMap().entries.map((entry) {
+                final myListCourses = entry.value;
+                return Column(
+                  children: [
+                    MyCourseItem(
+                      myCoursesList: myListCourses,
+                      onTap: () {
+                        context.pushNamed(
+                          RouteConstants.listLessons,
+                          pathParameters: {
+                            'id': myListCourses.id?.toString() ?? '0'
+                          }
+                        );
+                      },
+                    ),
+                    if (entry.key != state.myCoursesList.length - 1)
+                      Container(
+                        width: double.infinity,
+                        height: 0.8,
+                        color: Colors.grey.withOpacity(0.4),
+                      )
+                  ],
+                );
+              }).toList(),
             ),
           );
         }
         if (state is MyCoursesListError) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showErrorDialog(state.message);
-          });
+          return Container(
+            margin: const EdgeInsets.only(top: 96),
+            child: const EmptyScreen(
+              title: 'Anda belum terdaftar pada kelas apapun',
+              description: 'Coba untuk mendaftar pada kelas yang ingin anda ikuti terlebih dahulu'
+            ),
+          );
         }
         return const SizedBox.shrink();
       }
