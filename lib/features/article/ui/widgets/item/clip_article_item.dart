@@ -1,9 +1,11 @@
+import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/article/data/models/random_article_model.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ClipArticleItem extends StatelessWidget {
   final RandomArticle randomArticle;
@@ -62,6 +64,12 @@ class ClipArticleItem extends StatelessWidget {
                   width: double.infinity,
                   fit: BoxFit.cover,
                   fadeInDuration: const Duration(seconds: 0),
+                    loadingBuilder: (context, progress) {
+                      return const RectangleShimmerSizedBox(
+                        height: 200,
+                        width: double.infinity
+                      );
+                    }
                 ),
                 const SizedBox(height: 16),
                 Text(

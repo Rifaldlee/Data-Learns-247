@@ -6,6 +6,7 @@ import 'package:data_learns_247/features/reels/cubit/detail_reels_cubit.dart';
 import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
 import 'package:data_learns_247/features/reels/ui/widgets/video_widget.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
+import 'package:video_player/video_player.dart';
 
 class DetailReelsScreen extends StatefulWidget {
   final String id;
@@ -19,6 +20,7 @@ class DetailReelsScreen extends StatefulWidget {
 class _DetailReelsScreenState extends State<DetailReelsScreen> {
   int currentIndex = 0;
   late PageController pageController;
+  final Map<String, VideoPlayerController> _videoControllers = {};
 
   @override
   void initState() {
@@ -30,8 +32,41 @@ class _DetailReelsScreenState extends State<DetailReelsScreen> {
 
   @override
   void dispose() {
+    for (var controller in _videoControllers.values) {
+      controller.dispose();
+    }
     pageController.dispose();
     super.dispose();
+  }
+
+  VideoPlayerController getController(String videoUrl) {
+    if (!_videoControllers.containsKey(videoUrl)) {
+      final tempController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+      tempController.initialize().then((_) {
+        setState(() {
+          tempController.setLooping(true);
+          tempController.play();
+        });
+      });
+      _videoControllers[videoUrl] = tempController;
+    }
+    return _videoControllers[videoUrl]!;
+  }
+
+  void initializeNextVideo(int currentIndex, List<dynamic> reelsList) {
+    final nextIndex = currentIndex + 1;
+    if (nextIndex < reelsList.length) {
+      final nextReel = reelsList[nextIndex];
+      final nextVideoUrl = nextReel.videoUrl.toString();
+
+      if (!_videoControllers.containsKey(nextVideoUrl)) {
+        final tempController = VideoPlayerController.networkUrl(Uri.parse(nextVideoUrl));
+        tempController.initialize().then((_) {
+          tempController.setLooping(true);
+          _videoControllers[nextVideoUrl] = tempController;
+        });
+      }
+    }
   }
 
   void showErrorDialog(String message) {
@@ -53,7 +88,7 @@ class _DetailReelsScreenState extends State<DetailReelsScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: kBlackColor,
-        statusBarIconBrightness: Brightness.light
+        statusBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
         backgroundColor: kBlackColor,
@@ -79,12 +114,13 @@ class _DetailReelsScreenState extends State<DetailReelsScreen> {
                       setState(() {
                         currentIndex = index;
                       });
+                      initializeNextVideo(index - 1, reelsList);
                     },
                     itemCount: reelsList.length + 1,
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return VideoWidget(
-                          videoUrl: detailVideo.videoUrl,
+                          controller: getController(detailVideo.videoUrl.toString()),
                           title: detailVideo.title!,
                           authorName: detailVideo.fieldDisplayName!,
                           authorPicture: detailVideo.userPicture!,
@@ -92,7 +128,7 @@ class _DetailReelsScreenState extends State<DetailReelsScreen> {
                       } else {
                         final reel = reelsList[index - 1];
                         return VideoWidget(
-                          videoUrl: reel.videoUrl,
+                          controller: getController(reel.videoUrl.toString()),
                           title: reel.title!,
                           authorName: reel.author!,
                           authorPicture: reel.authorPhoto!,

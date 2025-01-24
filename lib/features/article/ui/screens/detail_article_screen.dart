@@ -355,7 +355,6 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
     );
   }
 
-
   Widget articleListLink(Article detailArticle) {
     return Column(
       children: detailArticle.listLink!.map((ListLink listLink) {

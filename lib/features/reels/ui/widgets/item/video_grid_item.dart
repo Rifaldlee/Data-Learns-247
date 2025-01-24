@@ -41,7 +41,7 @@ class _VideoGridItemState extends State<VideoGridItem>
     super.build(context);
 
     if (!_controller.value.isInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: kGreenColor));
     }
 
     return ClipRRect(

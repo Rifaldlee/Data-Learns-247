@@ -22,13 +22,6 @@ class SimpleArticleItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              listArticles.blockGroup!,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
-            ),
-            Text(
               unescape.convert(listArticles.title!),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
