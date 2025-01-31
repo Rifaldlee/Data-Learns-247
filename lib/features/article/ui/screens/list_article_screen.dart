@@ -1,4 +1,5 @@
 import 'package:data_learns_247/core/theme/theme.dart';
+import 'package:data_learns_247/features/article/ui/widgets/placeholder/clip_article_item_placeholder.dart';
 import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
 import 'package:data_learns_247/features/reels/data/models/list_reels_model.dart';
 import 'package:data_learns_247/features/reels/ui/widgets/item/video_grid_item.dart';
@@ -171,10 +172,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
     return BlocBuilder<RandomArticleCubit, RandomArticleState>(
       builder: (context, state) {
         if (state is RandomArticleLoading) {
-          return Container(
-            margin: const EdgeInsets.all(16),
-            child: const CardArticleItemPlaceholder()
-          );
+          return const ClipArticleItemPlaceholder();
         } else if (state is RandomArticleCompleted) {
           return LayoutBuilder(
             builder: (context, constraints) {
@@ -211,9 +209,15 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
     return BlocBuilder<ListArticlesCubit, ListArticlesState>(
       builder: (context, state) {
         if (state is ListArticlesLoading) {
-          return const Padding(
-            padding: EdgeInsets.only(left: 16),
-            child:  CardArticleItemPlaceholder(),
+          return const SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.fromLTRB(16, 0, 0, 16),
+            child: Row(
+              children: [
+                CardArticleItemPlaceholder(),
+                CardArticleItemPlaceholder(),
+              ],
+            ),
           );
         } else if (state is ListArticlesCompleted) {
           return SingleChildScrollView(

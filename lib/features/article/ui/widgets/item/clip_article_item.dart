@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/article/data/models/random_article_model.dart';
-import 'package:shimmer/shimmer.dart';
 
 class ClipArticleItem extends StatelessWidget {
   final RandomArticle randomArticle;
