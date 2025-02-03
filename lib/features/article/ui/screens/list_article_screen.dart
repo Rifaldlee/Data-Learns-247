@@ -139,7 +139,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                                   flex: 2,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 16),
-                                    child: SearchButton(),
+                                    child: SearchButton(tabIndex: 0),
                                   )
                                 ),
                               ],

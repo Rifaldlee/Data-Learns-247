@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SearchButton extends StatelessWidget {
-  const SearchButton({super.key});
+  final int tabIndex;
+  const SearchButton({super.key, required this.tabIndex});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         context.pushNamed(
-            RouteConstants.searchScreen
+          RouteConstants.searchScreen,
+          pathParameters: {'previous_tab_index': tabIndex.toString()}
         );
       },
       child: Container(

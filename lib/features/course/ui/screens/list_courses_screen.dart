@@ -53,7 +53,7 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
         appBar: const CustomAppBar(
           showBackButton: false,
           title: 'Course',
-          trailing: SearchButton(),
+          trailing: SearchButton(tabIndex: 1),
         ),
         body: ListView(
           children: [

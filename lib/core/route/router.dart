@@ -52,17 +52,22 @@ class AppRouter {
           routes: [
             GoRoute(
               name:  RouteConstants.searchScreen,
-              path: 'searchScreen',
+              path: 'searchScreen/:previous_tab_index',
               pageBuilder: (context, state) {
-                return const MaterialPage(child: SearchScreen());
+                final previousTabIndex = state.pathParameters['previous_tab_index'];
+                return MaterialPage(child: SearchScreen(previousTabIndex: previousTabIndex.toInt()));
               },
               routes: [
                 GoRoute(
                   name: RouteConstants.searchResult,
-                  path: 'searchResult/:query',
+                  path: 'searchResult/:query/:initial_tab_index',
                   pageBuilder: (context, state) {
                     final query = state.pathParameters['query']!;
-                    return MaterialPage(child: SearchResultScreen(query: query));
+                    final initialTabIndex = state.pathParameters['initial_tab_index'];
+                    return MaterialPage(child: SearchResultScreen(
+                      query: query,
+                      initialTabIndex: initialTabIndex.toInt(),
+                    ));
                   },
                 ),
               ],

@@ -15,7 +15,12 @@ import 'package:data_learns_247/shared_ui/widgets/custom_search_bar.dart';
 
 class SearchResultScreen extends StatefulWidget {
   final String query;
-  const SearchResultScreen({super.key, required this.query});
+  final int initialTabIndex;
+  const SearchResultScreen({
+    super.key,
+    required this.query,
+    required this.initialTabIndex
+  });
 
   @override
   State<SearchResultScreen> createState() => _SearchResultScreenState();
@@ -45,53 +50,66 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         statusBarColor: kWhiteColor,
         statusBarIconBrightness: Brightness.dark,
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Scaffold(
-          backgroundColor: kWhiteColor,
-          body: Column(
-            children: [
-              searchAppBar(),
-              Expanded(
-                child: BlocBuilder<SearchCubit, SearchState>(
-                  builder: (context, state) {
-                    if (state is SearchLoading) {
-                      return const SearchResultPlaceHolder();
-                    } else if (state is SearchCompleted) {
-                      return SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              if (selectedFilter == 'All') ...[
-                                resultArticle(state.searchResult!),
-                                resultCourse(state.searchResult!),
-                              ] else if (selectedFilter == 'Article') ...[
-                                resultArticle(state.searchResult!),
-                              ] else if (selectedFilter == 'Course') ...[
-                                resultCourse(state.searchResult!),
+      child: PopScope(
+        canPop: true,
+        onPopInvokedWithResult: (didPop, result) {
+          if(!didPop) {
+            context.pushNamed(
+              RouteConstants.searchScreen,
+              pathParameters: {
+                'previous_tab_index': widget.initialTabIndex.toString()
+              }
+            );
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Scaffold(
+            backgroundColor: kWhiteColor,
+            body: Column(
+              children: [
+                searchAppBar(),
+                Expanded(
+                  child: BlocBuilder<SearchCubit, SearchState>(
+                    builder: (context, state) {
+                      if (state is SearchLoading) {
+                        return const SearchResultPlaceHolder();
+                      } else if (state is SearchCompleted) {
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                if (selectedFilter == 'All') ...[
+                                  resultArticle(state.searchResult!),
+                                  resultCourse(state.searchResult!),
+                                ] else if (selectedFilter == 'Article') ...[
+                                  resultArticle(state.searchResult!),
+                                ] else if (selectedFilter == 'Course') ...[
+                                  resultCourse(state.searchResult!),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                      );
-                    } else if (state is SearchEmpty) {
-                      return Container(
-                        margin: const EdgeInsets.only(top: 64),
-                        child: const EmptyScreen(
-                          title: 'Oops! Pencarian tidak ditemukan',
-                          description: 'Sepertinya tidak ada artikel atau pembelajaran yang sesuai. Coba gunakan kata kunci yang berbeda atau perluas pencarian Anda',
-                        ),
-                      );
-                    } else if (state is SearchError) {
-                      return Center(child: Text(state.message));
-                    }
-                    return const SizedBox.shrink();
-                  },
+                        );
+                      } else if (state is SearchEmpty) {
+                        return Container(
+                          margin: const EdgeInsets.only(top: 64),
+                          child: const EmptyScreen(
+                            title: 'Oops! Pencarian tidak ditemukan',
+                            description: 'Sepertinya tidak ada artikel atau pembelajaran yang sesuai. Coba gunakan kata kunci yang berbeda atau perluas pencarian Anda',
+                          ),
+                        );
+                      } else if (state is SearchError) {
+                        return Center(child: Text(state.message));
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -146,7 +164,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           IconButton(
             icon: const Icon(Icons.keyboard_backspace, size: 32),
             onPressed: () {
-              context.pop();
+              context.pushNamed(
+                RouteConstants.searchScreen,
+                pathParameters: {
+                  'previous_tab_index': widget.initialTabIndex.toString()
+                }
+              );
             },
           ),
           Expanded(
