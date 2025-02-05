@@ -1,15 +1,15 @@
-import 'package:data_learns_247/features/course/ui/widgets/placeholder/list_course_placeholder.dart';
-import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
-import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/course/cubit/list_courses_cubit.dart';
 import 'package:data_learns_247/features/course/ui/widgets/item/course_item.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
+import 'package:data_learns_247/features/course/ui/widgets/placeholder/list_course_placeholder.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
+import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 
 class ListCoursesScreen extends StatefulWidget {
   const ListCoursesScreen({super.key});
@@ -26,19 +26,6 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
   void initState() {
     super.initState();
     context.read<ListCoursesCubit>().fetchListCourses();
-  }
-
-  void showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-      message: message,
-      onClose: () {
-        Navigator.of(context).pop();
-        context.read<ListCoursesCubit>().fetchListCourses();
-        }
-      )
-    );
   }
 
   @override
@@ -105,7 +92,10 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
         }
         if (state is ListCoursesError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            showErrorDialog(state.message);
+            ErrorDialog.showErrorDialog(context, state.message, () {
+              Navigator.of(context).pop();
+              context.read<ListCoursesCubit>().fetchListCourses();
+            });
           });
         }
         return const SizedBox.shrink();

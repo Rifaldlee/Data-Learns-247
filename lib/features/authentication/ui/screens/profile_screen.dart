@@ -1,15 +1,15 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/core/tools/shared_pref_util.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/authentication/cubit/user_cubit.dart';
 import 'package:data_learns_247/features/authentication/ui/widgets/item/personal_info_item.dart';
 import 'package:data_learns_247/features/authentication/ui/widgets/placeholder/profile_screen_placeholder.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/affirmation_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 import 'package:data_learns_247/shared_ui/widgets/text_with_shader.dart';
@@ -28,20 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     context.read<UserCubit>().getUserData();
-  }
-
-  void showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-        message: message,
-        onClose: () {
-          Navigator.of(context).pop();
-          context.read<UserCubit>().getUserData();
-        },
-      ),
-      barrierDismissible: false,
-    );
   }
 
   @override
@@ -70,7 +56,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
               } else if (state is UserError) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  showErrorDialog(state.message);
+                  ErrorDialog.showErrorDialog(context, state.message, () {
+                    Navigator.of(context).pop();
+                    context.read<UserCubit>().getUserData();
+                  });
                 });
               }
               return const SizedBox.shrink();
@@ -82,13 +71,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget profileScreenWidget(
-      String avatarLink,
-      String name,
-      String email,
-      String organization,
-      String city,
-      String birth
-      ) {
+    String avatarLink,
+    String name,
+    String email,
+    String organization,
+    String city,
+    String birth
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

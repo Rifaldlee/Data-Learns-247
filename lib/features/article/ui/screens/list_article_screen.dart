@@ -1,16 +1,13 @@
-import 'package:data_learns_247/core/theme/theme.dart';
-import 'package:data_learns_247/features/article/ui/widgets/placeholder/clip_article_item_placeholder.dart';
-import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
-import 'package:data_learns_247/features/reels/data/models/list_reels_model.dart';
-import 'package:data_learns_247/features/reels/ui/widgets/item/video_grid_item.dart';
-import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
-import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:video_player/video_player.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
+import 'package:data_learns_247/core/theme/theme.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/article/cubit/featured_articles_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/list_articles_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/random_article_cubit.dart';
@@ -20,10 +17,13 @@ import 'package:data_learns_247/features/article/data/models/list_articles_model
 import 'package:data_learns_247/features/article/ui/widgets/item/card_article_item.dart';
 import 'package:data_learns_247/features/article/ui/widgets/item/clip_article_item.dart';
 import 'package:data_learns_247/features/article/ui/widgets/item/simple_article_item.dart';
+import 'package:data_learns_247/features/article/ui/widgets/placeholder/clip_article_item_placeholder.dart';
 import 'package:data_learns_247/features/article/ui/widgets/placeholder/card_article_item_placeholder.dart';
 import 'package:data_learns_247/features/article/ui/widgets/placeholder/simple_article_item_placeholder.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
-import 'package:video_player/video_player.dart';
+import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
+import 'package:data_learns_247/features/reels/data/models/list_reels_model.dart';
+import 'package:data_learns_247/features/reels/ui/widgets/item/video_grid_item.dart';
+import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 
 class ListArticlesScreen extends StatefulWidget {
   const ListArticlesScreen({super.key});
@@ -60,20 +60,13 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
   }
 
   void showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-        message: message,
-        onClose: () {
-          setState(() {
-            listArticleError = false;
-          });
-          Navigator.of(context).pop();
-          fetchArticles();
-        },
-      ),
-      barrierDismissible: false,
-    );
+    ErrorDialog.showErrorDialog(context, message, () {
+      setState(() {
+        listArticleError = false;
+      });
+      Navigator.of(context).pop();
+      fetchArticles();
+    });
   }
 
   @override

@@ -11,6 +11,7 @@ import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/core/tools/html_parser.dart';
 import 'package:data_learns_247/core/tools/pdf_extractor.dart';
 import 'package:data_learns_247/core/tools/youtube_extractor.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/lesson/cubit/finish_lesson_cubit.dart';
 import 'package:data_learns_247/features/lesson/cubit/lesson_cubit.dart';
 import 'package:data_learns_247/features/lesson/ui/widgets/finish_lesson_button_widget.dart';
@@ -19,7 +20,6 @@ import 'package:data_learns_247/features/lesson/ui/widgets/course_section_widget
 import 'package:data_learns_247/features/lesson/ui/widgets/bottom_navigation_bar_widget.dart';
 import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:data_learns_247/shared_ui/widgets/youtube_player.dart';
 
@@ -57,16 +57,9 @@ class _LessonScreenState extends State<LessonScreen> {
 
   void showErrorDialog(String message) {
     if (!mounted) return;
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-        message: message,
-        onClose: () {
-          Navigator.of(context).pop();
-        },
-      ),
-      barrierDismissible: false,
-    );
+    ErrorDialog.showErrorDialog(context, message, () {
+      Navigator.of(context).pop();
+    });
   }
 
   void initializeYoutubeController(String content) {

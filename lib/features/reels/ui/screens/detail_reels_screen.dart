@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:data_learns_247/core/theme/color.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/reels/cubit/detail_reels_cubit.dart';
 import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
 import 'package:data_learns_247/features/reels/ui/widgets/video_widget.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
 import 'package:video_player/video_player.dart';
 
 class DetailReelsScreen extends StatefulWidget {
@@ -70,17 +70,10 @@ class _DetailReelsScreenState extends State<DetailReelsScreen> {
   }
 
   void showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-        message: message,
-        onClose: () {
-          Navigator.of(context).pop();
-          context.read<ListReelsCubit>().fetchListReels();
-        },
-      ),
-      barrierDismissible: false,
-    );
+    ErrorDialog.showErrorDialog(context, message,() {
+      Navigator.of(context).pop();
+      context.read<ListReelsCubit>().fetchListReels();
+    });
   }
 
   @override

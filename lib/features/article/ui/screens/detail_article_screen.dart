@@ -1,12 +1,13 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/parser.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/core/tools/youtube_extractor.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/article/cubit/article_detail_navigation_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/detail_article_cubit.dart';
 import 'package:data_learns_247/features/article/data/models/detail_article_model.dart';
@@ -14,7 +15,7 @@ import 'package:data_learns_247/features/article/data/models/list_link_model.dar
 import 'package:data_learns_247/features/article/ui/widgets/item/link_article_item.dart';
 import 'package:data_learns_247/features/article/ui/widgets/placeholder/detail_article_placeholder.dart';
 import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
+import 'package:data_learns_247/shared_ui/widgets/error_dialog_widget.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 import 'package:data_learns_247/shared_ui/widgets/youtube_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -179,7 +180,7 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
   void showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => ErrorDialog(
+      builder: (context) => ErrorDialogWidget(
         message: message,
         onClose: () {
           Navigator.of(context).pop();
@@ -247,7 +248,11 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
           );
         } else if (state is DetailArticleError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            showErrorDialog(state.message);
+            ErrorDialog.showErrorDialog( context, state.message, () {
+                Navigator.of(context).pop();
+                fetchArticleData();
+              },
+            );
           });
         }
         return const Center(child: Text('Unknown state'));

@@ -1,7 +1,5 @@
-import 'package:data_learns_247/core/route/page_cubit.dart';
-import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/parser.dart';
@@ -9,13 +7,15 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
+import 'package:data_learns_247/core/route/page_cubit.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/course/cubit/detail_course_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
 import 'package:data_learns_247/features/course/ui/widgets/placeholder/enrolled_detail_course_placeholder.dart';
 import 'package:data_learns_247/features/lesson/ui/widgets/item/lesson_item.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 
 class ListLessonsScreen extends StatefulWidget {
   final String id;
@@ -37,21 +37,6 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
       context.read<DetailCourseCubit>().fetchDetailCourse(widget.id);
       context.read<CourseSectionsCubit>().clearSections();
     }
-  }
-
-  void showErrorDialog(String message) {
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-        message: message,
-        onClose: () {
-          Navigator.of(context).pop();
-          context.read<DetailCourseCubit>().fetchDetailCourse(widget.id);
-        },
-      ),
-      barrierDismissible: false,
-    );
   }
 
   @override
@@ -113,7 +98,10 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
         }
         if (state is DetailCourseError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            showErrorDialog(state.message);
+            ErrorDialog.showErrorDialog(context, state.message, () {
+              Navigator.of(context).pop();
+              context.read<DetailCourseCubit>().fetchDetailCourse(widget.id);
+            });
           });
         }
         return const Center(child: Text('Unknown state'));

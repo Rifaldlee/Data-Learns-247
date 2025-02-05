@@ -1,6 +1,5 @@
-import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/parser.dart';
@@ -10,13 +9,14 @@ import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/core/theme/theme.dart';
 import 'package:data_learns_247/core/tools/html_parser.dart';
+import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/course/cubit/detail_course_cubit.dart';
 import 'package:data_learns_247/features/course/cubit/enroll_course_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
-import 'package:data_learns_247/features/course/ui/widgets/placeholder/detail_course_placeholder.dart';
-import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
-import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 import 'package:data_learns_247/features/course/ui/widgets/course_button_widget.dart';
+import 'package:data_learns_247/features/course/ui/widgets/placeholder/detail_course_placeholder.dart';
+import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 
 class DetailCourseScreen extends StatefulWidget {
   final String id;
@@ -43,21 +43,6 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
     if (widget.id.isNotEmpty) {
       context.read<DetailCourseCubit>().fetchDetailCourse(widget.id);
     }
-  }
-
-  void showErrorDialog(String message) {
-    if (!mounted) return;
-      showDialog(
-        context: context,
-        builder: (context) => ErrorDialog(
-          message: message,
-          onClose: () {
-            Navigator.of(context).pop();
-            fetchCourseData();
-          },
-        ),
-        barrierDismissible: false,
-      );
   }
 
   @override
@@ -124,7 +109,10 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
         }
         if (state is DetailCourseError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            showErrorDialog(state.message);
+            ErrorDialog.showErrorDialog(context, state.message, () {
+              Navigator.of(context).pop();
+              fetchCourseData();
+            });
           });
         }
         return const Center(child: Text('Unknown state'));

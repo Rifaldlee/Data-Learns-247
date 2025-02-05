@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 
-class ErrorDialog extends StatelessWidget {
+class ErrorDialogWidget extends StatelessWidget {
   final String message;
-  final VoidCallback  onClose;
-  const ErrorDialog({super.key, required this.message, required this.onClose});
+  final VoidCallback onClose;
+  const ErrorDialogWidget({super.key, required this.message, required this.onClose});
 
   @override
   Widget build(BuildContext context) {
