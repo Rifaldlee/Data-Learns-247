@@ -1,4 +1,3 @@
-import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,8 +13,10 @@ import 'package:data_learns_247/features/article/data/models/detail_article_mode
 import 'package:data_learns_247/features/article/data/models/list_link_model.dart';
 import 'package:data_learns_247/features/article/ui/widgets/item/link_article_item.dart';
 import 'package:data_learns_247/features/article/ui/widgets/placeholder/detail_article_placeholder.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
+import 'package:data_learns_247/shared_ui/widgets/youtube_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:data_learns_247/core/tools/html_parser.dart';
 
@@ -204,8 +205,12 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
           return SafeArea(
             child: isFullScreen ? Center(
               child: FittedBox(
-                  fit: BoxFit.fill,
-                  child: youtubePlayer(ytController!)
+                fit: BoxFit.fill,
+                child: YoutubePlayerWidget(
+                  controller: ytController!,
+                  onEnterFullScreen: onEnterFullScreen,
+                  onExitFullScreen: onExitFullScreen
+                )
               ),
             ) : Scaffold(
               backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
@@ -225,7 +230,11 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
                       detailArticleHeading(state.detailArticle),
                       const SizedBox(height: 18),
                       if (ytController != null)
-                        youtubePlayer(ytController!),
+                        YoutubePlayerWidget(
+                          controller: ytController!,
+                          onEnterFullScreen: onEnterFullScreen,
+                          onExitFullScreen: onExitFullScreen
+                        ),
                       articleContent(state.detailArticle.body ?? 'No Content Available'),
                       const SizedBox(height: 16),
                       if (state.detailArticle.listLink != null && state.detailArticle.listLink!.isNotEmpty)
@@ -243,25 +252,6 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
         }
         return const Center(child: Text('Unknown state'));
       },
-    );
-  }
-
-  Widget youtubePlayer(YoutubePlayerController controller) {
-    return SafeArea(
-      child: YoutubePlayerBuilder(
-        onEnterFullScreen: onEnterFullScreen,
-        onExitFullScreen: onExitFullScreen,
-        player: YoutubePlayer(
-          controller: controller,
-          showVideoProgressIndicator: true,
-          progressColors: const ProgressBarColors(
-            playedColor: kGreenColor,
-            handleColor: kGreenColor,
-          ),
-          actionsPadding: const EdgeInsets.all(8),
-        ),
-        builder: (context, player) => player,
-      ),
     );
   }
 

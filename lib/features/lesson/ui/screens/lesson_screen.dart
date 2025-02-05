@@ -1,9 +1,7 @@
-import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:url_launcher/link.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:html/parser.dart';
@@ -15,13 +13,15 @@ import 'package:data_learns_247/core/tools/pdf_extractor.dart';
 import 'package:data_learns_247/core/tools/youtube_extractor.dart';
 import 'package:data_learns_247/features/lesson/cubit/finish_lesson_cubit.dart';
 import 'package:data_learns_247/features/lesson/cubit/lesson_cubit.dart';
-import 'package:data_learns_247/features/lesson/data/models/lesson_model.dart';
 import 'package:data_learns_247/features/lesson/ui/widgets/finish_lesson_button_widget.dart';
-import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item.dart';
-import 'package:data_learns_247/features/lesson/ui/widgets/item/section_item_drawer.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/course_section_drawer_widget.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/course_section_widget.dart';
+import 'package:data_learns_247/features/lesson/ui/widgets/bottom_navigation_bar_widget.dart';
 import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
 import 'package:data_learns_247/shared_ui/widgets/error_dialog.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
+import 'package:data_learns_247/shared_ui/widgets/youtube_player.dart';
 
 class LessonScreen extends StatefulWidget {
   final String id;
@@ -205,7 +205,12 @@ class _LessonScreenState extends State<LessonScreen> {
                       return Container(
                         color: kWhiteColor,
                         child: SingleChildScrollView(
-                          child: courseSectionDrawer(state.sections, state.progress),
+                          child: CourseSectionDrawer(
+                            sections: state.sections,
+                            progress: state.progress,
+                            courseId: widget.courseId,
+                            id: widget.id,
+                          ),
                         ),
                       );
                     }
@@ -223,10 +228,13 @@ class _LessonScreenState extends State<LessonScreen> {
                       isComplete
                     )
                   ),
-                  if (!isFullScreen) lessonBottomNavBar(
-                    state.lesson,
-                    state.lesson.lessonType.toString()
-                  )
+                  if (!isFullScreen)
+                    BottomNavigationBarWidget(
+                      lesson: state.lesson,
+                      type: state.lesson.lessonType.toString(),
+                      lessonId: widget.id,
+                      courseId: widget.courseId
+                    )
                 ],
               )
             ),
@@ -298,7 +306,10 @@ class _LessonScreenState extends State<LessonScreen> {
           BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
             builder: (context, state) {
               if (state is CourseSectionsCompleted) {
-                return courseSection(state.sections);
+                return CourseSectionWidget(
+                  sections: state.sections,
+                  id: widget.id
+                );
               }
               return const Text('No sections available');
             },
@@ -414,7 +425,10 @@ class _LessonScreenState extends State<LessonScreen> {
           BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
             builder: (context, state) {
               if (state is CourseSectionsCompleted) {
-                return courseSection(state.sections);
+                return CourseSectionWidget(
+                  sections: state.sections,
+                  id: widget.id
+                );
               }
               return const Text('No sections available');
             },
@@ -430,7 +444,6 @@ class _LessonScreenState extends State<LessonScreen> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: 16,
         horizontal: 32,
       ),
       child: SingleChildScrollView(
@@ -516,228 +529,15 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   Widget youtubePlayer(YoutubePlayerController controller, bool isComplete) {
-    return SafeArea(
-      child: YoutubePlayerBuilder(
-          onEnterFullScreen: onEnterFullScreen,
-          onExitFullScreen: onExitFullScreen,
-          player:  YoutubePlayer(
-            controller: ytController!,
-            showVideoProgressIndicator: true,
-            onEnded: (_) {
-              if (!isComplete) {
-                context.read<FinishLessonCubit>().finishLesson(widget.id);
-              }
-            },
-            progressColors: const ProgressBarColors(
-              playedColor: kGreenColor,
-              handleColor: kGreenColor,
-            ),
-          ),
-          builder: (context, player) => player
-      ),
-    );
-  }
-
-  Widget courseSection(List<Sections> sections) {
-    int getLessonIndex(int sectionIndex, int lessonIndex) {
-      int totalPreviousLessons = 0;
-      for (int i = 0; i < sectionIndex; i++) {
-        totalPreviousLessons += sections[i].lessons?.length ?? 0;
-      }
-      return totalPreviousLessons + lessonIndex + 1;
-    }
-
-    return Expanded(
-      child: Container(
-        color: kWhiteColor,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: sections.asMap().entries.map((sectionEntry) {
-                final section = sectionEntry.value;
-                final sectionIndex = sectionEntry.key + 1;
-                bool isExpanded = section.lessons?.any(
-                  (lesson) => lesson.lessonID.toString() == widget.id,
-                ) ?? false;
-
-                return SectionItem(
-                  section: section,
-                  courseId: widget.courseId,
-                  sectionIndex: sectionIndex,
-                  isExpanded: isExpanded,
-                  getLessonIndex: getLessonIndex,
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget courseSectionDrawer(List<Sections> sections, String progress) {
-    return Container(
-      color: kWhiteColor,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24
-            ),
-            child: Text(
-              "Daftar Modul",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: kBlackColor,
-              ),
-            ),
-          ),
-          // Progress Bar
-          Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16,
-              horizontal: 8
-            ),
-            color: Colors.grey.withOpacity(0.1),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                LinearPercentIndicator(
-                  percent: double.tryParse(progress)! / 100,
-                  progressColor: kGreenColor,
-                  barRadius: const Radius.circular(8),
-                  backgroundColor: Colors.grey[300],
-                ),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(12, 8, 0, 0),
-                  child: Text(
-                    '$progress% Selesai',
-                    style: Theme.of(context).textTheme.bodyMedium
-                  ),
-                )
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          ...sections.map((section) {
-            bool isExpanded = section.lessons?.any(
-              (lesson) => lesson.lessonID.toString() == widget.id
-            ) ?? false;
-            return SectionItemDrawer(
-              section: section,
-              courseId: widget.courseId,
-              isExpanded: isExpanded
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget lessonBottomNavBar(Lesson lesson, String type) {
-    final titleDoc = parse(lesson.title!);
-    var title = titleDoc.querySelector('a')?.text;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 16.0,
-        horizontal: 32.0,
-      ),
-      color: kWhiteColor,
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              if (lesson.previousLesson != 0) {
-                context.pushNamed(
-                  RouteConstants.lessonScreen,
-                  pathParameters: {
-                    'id': widget.courseId.toString(),
-                    'lessonId': lesson.previousLesson.toString(),
-                  }
-                );
-              }
-            },
-            child: Container(
-              height: 32,
-              width: 32,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                    color: lesson.previousLesson != 0 ? kGreenColor : kDarkGreyColor
-                )
-              ),
-              child: Icon(
-                Icons.chevron_left,
-                color: lesson.previousLesson != 0 ? kGreenColor : kDarkGreyColor
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                title!,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          if (lesson.nextLesson != 0)
-            GestureDetector(
-              onTap: () {
-                if (!lesson.isComplete! && lesson.lessonType != 'youtube') {
-                  context.read<FinishLessonCubit>().finishLesson(widget.id);
-                }
-                context.pushNamed(
-                  RouteConstants.lessonScreen,
-                  pathParameters: {
-                    'id': widget.courseId.toString(),
-                    'lessonId': lesson.nextLesson.toString(),
-                  }
-                );
-              },
-              child: Container(
-                height: 32,
-                width: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: kGreenColor
-                  )
-                ),
-                child: const Icon(
-                  Icons.chevron_right,
-                  color: kGreenColor,
-                ),
-              ),
-            ),
-          if (lesson.nextLesson == 0)
-            GestureDetector(
-              onTap: () {
-                if (!lesson.isComplete!  && lesson.lessonType != 'youtube') {
-                  context.read<FinishLessonCubit>().finishLesson(widget.id);
-                  context.pushNamed(
-                    RouteConstants.listLessons,
-                    pathParameters: {
-                      'id': widget.courseId.toString(),
-                    },
-                  );
-                }
-                context.pushNamed(
-                  RouteConstants.listLessons,
-                  pathParameters: {
-                    'id': widget.courseId.toString(),
-                  },
-                );
-              },
-              child: const Text('finish')
-            )
-        ],
-      ),
+    return YoutubePlayerWidget(
+      controller: controller,
+      onEnterFullScreen: onEnterFullScreen,
+      onExitFullScreen: onExitFullScreen,
+      onEnded: () {
+        if (!isComplete) {
+          context.read<FinishLessonCubit>().finishLesson(widget.id);
+        }
+      },
     );
   }
 
