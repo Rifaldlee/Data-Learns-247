@@ -6,7 +6,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:data_learns_247/core/route/router.dart';
 import 'package:data_learns_247/core/route/page_cubit.dart';
-import 'package:data_learns_247/core/tools/shared_pref_util.dart';
+import 'package:data_learns_247/core/utils/shared_pref_util.dart';
 import 'package:data_learns_247/features/article/cubit/article_detail_navigation_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/detail_article_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/featured_articles_cubit.dart';

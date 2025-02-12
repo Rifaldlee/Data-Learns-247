@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
 import 'package:nb_utils/nb_utils.dart';
 import 'package:data_learns_247/core/provider//api_exception.dart';
-import 'package:data_learns_247/core/tools/shared_pref_util.dart';
+import 'package:data_learns_247/core/utils/shared_pref_util.dart';
 
 typedef NetworkCallBack<R> = R Function(dynamic);
 

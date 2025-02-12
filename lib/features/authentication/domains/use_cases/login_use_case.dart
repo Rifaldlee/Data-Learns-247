@@ -1,6 +1,6 @@
 import 'package:nb_utils/nb_utils.dart';
 import 'package:data_learns_247/core/repository/authentication_repository.dart';
-import 'package:data_learns_247/core/tools/shared_pref_util.dart';
+import 'package:data_learns_247/core/utils/shared_pref_util.dart';
 import 'package:data_learns_247/features/authentication/data/dto/login_request_payload.dart';
 import 'package:data_learns_247/features/authentication/data/response/login_response.dart';
 

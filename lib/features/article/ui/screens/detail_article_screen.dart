@@ -101,56 +101,48 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
   }
 
   void initializeYoutubeController(String content) {
-    if (widget.hasVideo) {
-      String ytId = YoutubeExtractor.extract(
-        content: content,
-        attribute: 'src',
-      );
-      if (ytId.isNotEmpty) {
-        ytController = YoutubePlayerController(
-          initialVideoId: ytId,
-          flags: const YoutubePlayerFlags(
-            autoPlay: false,
-            enableCaption: true,
-            controlsVisibleAtStart: true,
-          ),
-        );
-        ytController!.addListener(youtubeControllerListener);
-        setState(() {
-          isControllerInitialized = true;
-        });
-      }
+    final ytId = YoutubeExtractor.extract(content: content, attribute: 'src');
+    if (ytId.isEmpty) {
+      showErrorDialog("Invalid YouTube video ID");
+      return;
     }
+
+    if (ytController != null && ytController!.initialVideoId != ytId) {
+      ytController!.load(ytId);
+    }
+
+    ytController ??= YoutubePlayerController(
+      initialVideoId: ytId.toString(),
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        enableCaption: false,
+        controlsVisibleAtStart: true,
+      ),
+    );
+    ytController!.addListener(youtubeControllerListener);
   }
 
   void youtubeControllerListener() {
-    if (!mounted) return;
+    if (!mounted || ytController == null) return;
     if (!isSeeking && ytController!.value.isReady && lastPlaybackPosition != null) {
-      final currentPosition = ytController!.value.position.inSeconds;
-      if (currentPosition != lastPlaybackPosition!.toInt()) {
-        isSeeking = true;
-        ytController!.seekTo(Duration(seconds: lastPlaybackPosition!.toInt()));
-        if (wasPlayingBeforeTransition) {
-          ytController!.play();
-        }
-        setState(() {
-          lastPlaybackPosition = null;
-          isSeeking = false;
-        });
+      isSeeking = true;
+      ytController!.seekTo(Duration(seconds: lastPlaybackPosition!.toInt()));
+      if (wasPlayingBeforeTransition) {
+        ytController!.play();
       }
+      lastPlaybackPosition = null;
+      isSeeking = false;
     }
   }
 
   void onEnterFullScreen() {
-    if (ytController != null) {
-      wasPlayingBeforeTransition = ytController!.value.isPlaying;
-      lastPlaybackPosition = ytController!.value.position.inSeconds.toDouble();
-    }
+    wasPlayingBeforeTransition = ytController!.value.isPlaying;
+    lastPlaybackPosition = ytController!.value.position.inSeconds.toDouble();
     setState(() {
       isFullScreen = true;
     });
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
     Future.delayed(const Duration(milliseconds: 300), () {
       if (wasPlayingBeforeTransition && ytController != null) {
@@ -160,10 +152,9 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
   }
 
   void onExitFullScreen() {
-    if (ytController != null) {
-      wasPlayingBeforeTransition = ytController!.value.isPlaying;
-      lastPlaybackPosition = ytController!.value.position.inSeconds.toDouble();
-    }
+    wasPlayingBeforeTransition = ytController!.value.isPlaying;
+    lastPlaybackPosition = ytController!.value.position.inSeconds.toDouble();
+
     setState(() {
       isFullScreen = false;
     });
@@ -193,58 +184,64 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<DetailArticleCubit, DetailArticleState>(
-      listener: (context, state) {
-        if (state is DetailArticleCompleted && state.detailArticle.body != null) {
-          initializeYoutubeController(state.detailArticle.body!);
-        }
-      },
+    return BlocBuilder<DetailArticleCubit, DetailArticleState>(
       builder: (context, state) {
         if (state is DetailArticleLoading) {
           return const DetailArticlePlaceholder();
         } else if (state is DetailArticleCompleted) {
-          return SafeArea(
-            child: isFullScreen ? Center(
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: YoutubePlayerWidget(
-                  controller: ytController!,
-                  onEnterFullScreen: onEnterFullScreen,
-                  onExitFullScreen: onExitFullScreen
-                )
-              ),
-            ) : Scaffold(
-              backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
-              appBar: isFullScreen ? null : CustomAppBar(
-                showBackButton: true,
-                backAction: handleBackNavigation,
-              ),
-              body : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                    horizontal: 32.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      detailArticleHeading(state.detailArticle),
-                      const SizedBox(height: 18),
-                      if (ytController != null)
-                        YoutubePlayerWidget(
-                          controller: ytController!,
-                          onEnterFullScreen: onEnterFullScreen,
-                          onExitFullScreen: onExitFullScreen
-                        ),
-                      articleContent(state.detailArticle.body ?? 'No Content Available'),
-                      const SizedBox(height: 16),
-                      if (state.detailArticle.listLink != null && state.detailArticle.listLink!.isNotEmpty)
-                        articleListLink(state.detailArticle),
-                    ],
+          if (widget.hasVideo) {
+            initializeYoutubeController(state.detailArticle.body!);
+          }
+          return PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                handleBackNavigation;
+              }
+            },
+            child: SafeArea(
+              child: isFullScreen ? Center(
+                child: FittedBox(
+                  fit: BoxFit.fill,
+                  child: YoutubePlayerWidget(
+                    controller: ytController!,
+                    onEnterFullScreen: onEnterFullScreen,
+                    onExitFullScreen: onExitFullScreen
+                  )
+                ),
+              ) : Scaffold(
+                backgroundColor: isFullScreen ? kBlackColor : kWhiteColor,
+                appBar: isFullScreen ? null : CustomAppBar(
+                  showBackButton: true,
+                  backAction: handleBackNavigation,
+                ),
+                body : SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16.0,
+                      horizontal: 32.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        detailArticleHeading(state.detailArticle),
+                        const SizedBox(height: 18),
+                        if (ytController != null)
+                          YoutubePlayerWidget(
+                            controller: ytController!,
+                            onEnterFullScreen: onEnterFullScreen,
+                            onExitFullScreen: onExitFullScreen
+                          ),
+                        articleContent(state.detailArticle.body ?? 'No Content Available'),
+                        const SizedBox(height: 16),
+                        if (state.detailArticle.listLink != null && state.detailArticle.listLink!.isNotEmpty)
+                          articleListLink(state.detailArticle),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            )
+              )
+            ),
           );
         } else if (state is DetailArticleError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {

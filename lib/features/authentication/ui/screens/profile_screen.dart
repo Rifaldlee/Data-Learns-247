@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
-import 'package:data_learns_247/core/tools/shared_pref_util.dart';
+import 'package:data_learns_247/core/utils/shared_pref_util.dart';
 import 'package:data_learns_247/core/utils/error_dialog.dart';
 import 'package:data_learns_247/features/authentication/cubit/user_cubit.dart';
 import 'package:data_learns_247/features/authentication/ui/widgets/item/personal_info_item.dart';

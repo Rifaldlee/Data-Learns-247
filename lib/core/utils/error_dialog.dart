@@ -1,5 +1,5 @@
-import 'package:data_learns_247/shared_ui/widgets/error_dialog_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:data_learns_247/shared_ui/widgets/error_dialog_widget.dart';
 
 class ErrorDialog {
   static void showErrorDialog(

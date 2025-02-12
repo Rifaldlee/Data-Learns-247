@@ -77,7 +77,7 @@ class _LessonScreenState extends State<LessonScreen> {
       initialVideoId: ytId.toString(),
       flags: const YoutubePlayerFlags(
         autoPlay: false,
-        enableCaption: true,
+        enableCaption: false,
         controlsVisibleAtStart: true,
       ),
     );
