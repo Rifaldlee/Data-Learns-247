@@ -1,6 +1,7 @@
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 
 class LessonsItem extends StatelessWidget {
   final Lessons lessons;

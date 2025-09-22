@@ -7,12 +7,14 @@ class SectionChildItem extends StatelessWidget {
   final int lessonIndex;
   final Lessons lessons;
   final String courseId;
+  final String? chatbotId;
 
   const SectionChildItem({
     super.key,
     required this.lessonIndex,
     required this.lessons,
     required this.courseId,
+    this.chatbotId,
   });
 
   @override
@@ -55,9 +57,10 @@ class SectionChildItem extends StatelessWidget {
         onTap: () {
           context.pushNamed(
             RouteConstants.lessonScreen,
-            pathParameters: {
-              'id': courseId,
+            queryParameters: {
+              'courseId': courseId,
               'lessonId': lessons.lessonID.toString(),
+              'chatbotId': chatbotId
             },
           );
         },

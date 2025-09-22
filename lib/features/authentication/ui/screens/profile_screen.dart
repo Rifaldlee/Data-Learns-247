@@ -87,9 +87,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 16),
         profileHeader(avatarLink, name, email),
-        const SizedBox(height: 18),
+        const SizedBox(height: 12),
         personalInfo(organization, city, birth),
-        const SizedBox(height: 18),
+        const SizedBox(height: 12),
         appVersion(),
         const Spacer(),
         logoutButton(),
@@ -200,6 +200,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: 'Year of Birth',
                   content: birth,
                 ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: () {
+                    context.pushNamed(
+                      RouteConstants.certificate
+                    );
+                  },
+                  child: const Row(
+                    children:[
+                      Expanded(
+                        child: PersonalInfoItem(
+                          icon: Icons.article_outlined,
+                          title: 'Certificate',
+                          content: 'Sertifikat anda',
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: kBlueColor,
+                        size: 42,
+                      )
+                    ]
+                  ),
+                ),
               ],
             ),
           ),
@@ -231,7 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: PersonalInfoItem(
               icon: Icons.phone_android,
               title: 'Versi Aplikasi',
-              content: "1.1.2309"
+              content: "1.08.18"
             ),
           ),
         ),
@@ -247,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           builder: (context) => AffirmationDialog(
             message: 'Apakah anda yakin ingin keluar dari akun saat ini?',
             proceedText: 'Keluar',
-            onPressed: () {
+            onProceed: () {
               Navigator.pop(context);
               SharedPrefUtil.storeEmail("");
               SharedPrefUtil.storeJwtToken("");

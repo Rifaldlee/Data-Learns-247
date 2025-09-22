@@ -30,8 +30,8 @@ class _MyCoursesListScreenState extends State<MyCoursesListScreen> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-          statusBarColor: kWhiteColor,
-          statusBarIconBrightness: Brightness.dark
+        statusBarColor: kWhiteColor,
+        statusBarIconBrightness: Brightness.dark
       ),
       child: Scaffold(
         backgroundColor: kWhiteColor,
@@ -63,8 +63,8 @@ class _MyCoursesListScreenState extends State<MyCoursesListScreen> {
                       onTap: () {
                         context.pushNamed(
                           RouteConstants.listLessons,
-                          pathParameters: {
-                            'id': myListCourses.id?.toString() ?? '0'
+                          queryParameters: {
+                            'courseId': myListCourses.id?.toString() ?? '0'
                           }
                         );
                       },

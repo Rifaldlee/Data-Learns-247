@@ -21,11 +21,14 @@ class FinishLessonCubit extends Cubit<FinishLessonState> {
 
       if (courseResponse != null) {
         emit(FinishLessonCompleted (courseResponse));
+        print('FinishLessonCompleted');
       } else {
         emit(const FinishLessonError('Failed'));
+        print('FinishLessonError');
       }
     } catch (e) {
       emit(FinishLessonError(e.toString()));
+      print(e.toString());
     }
   }
 }

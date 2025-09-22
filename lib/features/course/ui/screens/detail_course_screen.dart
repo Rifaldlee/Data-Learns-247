@@ -19,8 +19,8 @@ import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 
 class DetailCourseScreen extends StatefulWidget {
-  final String id;
-  const DetailCourseScreen({super.key, required this.id});
+  final String courseId;
+  const DetailCourseScreen({super.key, required this.courseId});
 
   @override
   State<DetailCourseScreen> createState() {
@@ -30,6 +30,7 @@ class DetailCourseScreen extends StatefulWidget {
 
 class _DetailCourseScreen extends State<DetailCourseScreen> {
   bool isEnrolled = false;
+  bool hasShownEnrollToast = false;
 
   @override
   void initState() {
@@ -40,8 +41,8 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
   }
 
   void fetchCourseData() {
-    if (widget.id.isNotEmpty) {
-      context.read<DetailCourseCubit>().fetchDetailCourse(widget.id);
+    if (widget.courseId.isNotEmpty) {
+      context.read<DetailCourseCubit>().fetchDetailCourse(widget.courseId);
     }
   }
 
@@ -55,7 +56,7 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
         if (state is DetailCourseCompleted) {
           isEnrolled = state.detailCourse.isEnrolled ?? false;
           return PopScope(
-            canPop: true,
+            canPop: false,
             onPopInvokedWithResult: (didPop, result) {
               if (!didPop) {
                 context.read<PageCubit>().setPage(1);
@@ -293,8 +294,10 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
   Widget courseButton(bool isEnrolled) {
     return BlocConsumer<EnrollCourseCubit, EnrollCourseState>(
       listener: (context, state) {
-        if (state is EnrollCourseCompleted) {
+        if (state is EnrollCourseCompleted && !hasShownEnrollToast) {
+          hasShownEnrollToast = true;
           context.read<DetailCourseCubit>().updateEnrollment(true);
+
           toastification.show(
             context: context,
             type: ToastificationType.success,
@@ -313,7 +316,9 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             ),
             borderRadius: BorderRadius.circular(12),
           );
-        } else if (state is EnrollCourseError) {
+        } else if (state is EnrollCourseError && !hasShownEnrollToast) {
+          hasShownEnrollToast = true;
+
           toastification.show(
             context: context,
             type: ToastificationType.error,
@@ -326,7 +331,7 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             autoCloseDuration: const Duration(seconds: 5),
             title: const Text('Enroll gagal'),
             description: RichText(text: TextSpan(text: state.message)),
-            icon: const Icon(Icons.remove_circle_outline),
+            icon: const Icon(Icons.cancel_outlined),
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16
@@ -336,6 +341,9 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
         }
       },
       builder: (context, state) {
+        if (state is EnrollCourseInitial) {
+          hasShownEnrollToast = false;
+        }
         if (state is EnrollCourseLoading) {
           return Container(
             width: double.infinity,
@@ -361,7 +369,7 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             if (state is DetailCourseCompleted) {
               return CourseButtonWidget(
                 isEnrolled: state.isEnrolled,
-                id: widget.id,
+                id: widget.courseId,
               );
             }
             return const SizedBox();

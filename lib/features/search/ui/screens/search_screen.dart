@@ -31,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: PopScope(
-        canPop: true,
+        canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           if(!didPop) {
             context.read<PageCubit>().setPage(widget.previousTabIndex);

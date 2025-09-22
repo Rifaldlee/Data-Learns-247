@@ -208,7 +208,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       autoCloseDuration: const Duration(seconds: 5),
                                       title: const Text('Register Error'),
                                       description: RichText(text: TextSpan(text: state.message)),
-                                      icon: const Icon(Icons.remove_circle_outline),
+                                      icon: const Icon(Icons.cancel_outlined),
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 12,
                                         vertical: 16

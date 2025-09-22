@@ -12,13 +12,15 @@ class BottomNavigationBarWidget extends StatelessWidget {
   final String type;
   final String lessonId;
   final String courseId;
+  final String? chatbotId;
 
   const BottomNavigationBarWidget({
     super.key,
     required this.lesson,
     required this.type,
     required this.lessonId,
-    required this.courseId
+    required this.courseId,
+    this.chatbotId
   });
 
   @override
@@ -39,10 +41,11 @@ class BottomNavigationBarWidget extends StatelessWidget {
               if (lesson.previousLesson != 0) {
                 context.pushNamed(
                   RouteConstants.lessonScreen,
-                  pathParameters: {
-                    'id': courseId.toString(),
-                    'lessonId': lesson.previousLesson.toString(),
-                  }
+                    queryParameters: {
+                      'courseId': courseId.toString(),
+                      'lessonId': lesson.previousLesson.toString(),
+                      'chatbotId': chatbotId
+                    }
                 );
               }
             },
@@ -78,10 +81,11 @@ class BottomNavigationBarWidget extends StatelessWidget {
                 }
                 context.pushNamed(
                   RouteConstants.lessonScreen,
-                  pathParameters: {
-                    'id': courseId.toString(),
-                    'lessonId': lesson.nextLesson.toString(),
-                  }
+                    queryParameters: {
+                      'courseId': courseId.toString(),
+                      'lessonId': lesson.nextLesson.toString(),
+                      'chatbotId': chatbotId
+                    }
                 );
               },
               child: Container(
@@ -106,15 +110,15 @@ class BottomNavigationBarWidget extends StatelessWidget {
                   context.read<FinishLessonCubit>().finishLesson(lessonId);
                   context.pushNamed(
                     RouteConstants.listLessons,
-                    pathParameters: {
-                      'id': courseId.toString(),
+                    queryParameters: {
+                      'courseId': courseId.toString(),
                     },
                   );
                 }
                 context.pushNamed(
                   RouteConstants.listLessons,
-                  pathParameters: {
-                    'id': courseId.toString(),
+                  queryParameters: {
+                    'courseId': courseId.toString(),
                   },
                 );
               },

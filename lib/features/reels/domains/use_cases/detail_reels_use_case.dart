@@ -7,7 +7,7 @@ class GetDetailReels {
 
   GetDetailReels(this._id, this._reelsRepository);
 
-  Future<DetailReels?> call() async {
+  Future<List<DetailReels>> call() async {
     return await _reelsRepository.getDetailReels(_id);
   }
 }

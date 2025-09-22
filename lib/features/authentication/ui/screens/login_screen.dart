@@ -140,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
             autoCloseDuration: const Duration(seconds: 5),
               title: const Text('Login Unsuccessful'),
             description: RichText(text: TextSpan(text: state.message)),
-            icon: const Icon(Icons.remove_circle_outline),
+            icon: const Icon(Icons.cancel_outlined),
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16

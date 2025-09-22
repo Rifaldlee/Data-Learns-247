@@ -16,10 +16,10 @@ class DetailReelsCubit extends Cubit<DetailReelsState> {
     try {
       emit(DetailReelsLoading());
 
-      DetailReels? detailReels = await GetDetailReels(id, _reelsRepository).call();
+      List<DetailReels> reelsList = await GetDetailReels(id, _reelsRepository).call();
 
-      if (detailReels != null) {
-        emit(DetailReelsCompleted(detailReels));
+      if (reelsList.isNotEmpty) {
+        emit(DetailReelsCompleted(reelsList));
       } else {
         emit(const DetailReelsError('No data available'));
       }

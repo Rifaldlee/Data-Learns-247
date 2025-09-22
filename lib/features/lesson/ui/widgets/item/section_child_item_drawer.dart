@@ -6,11 +6,13 @@ import 'package:go_router/go_router.dart';
 class SectionChildItemDrawer extends StatelessWidget {
   final Lessons lessons;
   final String courseId;
+  final String? chatbotId;
 
   const SectionChildItemDrawer({
     super.key,
     required this.lessons,
-    required this.courseId
+    required this.courseId,
+    this.chatbotId
   });
 
   @override
@@ -39,9 +41,10 @@ class SectionChildItemDrawer extends StatelessWidget {
       onTap: () {
         context.pushNamed(
           RouteConstants.lessonScreen,
-          pathParameters: {
-            'id': courseId,
+          queryParameters: {
+            'courseId': courseId,
             'lessonId': lessons.lessonID.toString(),
+            'chatbotId': chatbotId
           },
         );
       },

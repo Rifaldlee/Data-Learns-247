@@ -25,9 +25,7 @@ class YoutubePlayerWidget extends StatelessWidget {
         player: YoutubePlayer(
           controller: controller,
           showVideoProgressIndicator: true,
-          onEnded: (_) {
-            onEnded;
-          },
+          onEnded: (_) => onEnded?.call(),
           progressColors: const ProgressBarColors(
             playedColor: kGreenColor,
             handleColor: kGreenColor,

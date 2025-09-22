@@ -1,3 +1,7 @@
+import 'package:data_learns_247/features/authentication/cubit/user_cubit.dart';
+import 'package:data_learns_247/features/greeting/ui/widgets/greeting_widget.dart';
+import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -23,7 +27,6 @@ import 'package:data_learns_247/features/article/ui/widgets/placeholder/simple_a
 import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
 import 'package:data_learns_247/features/reels/data/models/list_reels_model.dart';
 import 'package:data_learns_247/features/reels/ui/widgets/item/video_grid_item.dart';
-import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
 
 class ListArticlesScreen extends StatefulWidget {
   const ListArticlesScreen({super.key});
@@ -37,6 +40,8 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
   bool listArticleError = false;
   bool isScrolled = true;
   List<ListReels>? shuffledReels;
+  String? greetingImage;
+  String? greetingText;
 
   @override
   void initState() {
@@ -57,6 +62,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
     context.read<TrendingArticlesCubit>().fetchTrendingArticles();
     context.read<RandomArticleCubit>().fetchRandomArticle();
     context.read<ListReelsCubit>().fetchListReels();
+    context.read<UserCubit>().getUserData();
   }
 
   void showErrorDialog(String message) {
@@ -82,23 +88,14 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
         backgroundColor: kWhiteColor,
         body: Stack(
           children: [
-            Container(
-              width: double.infinity,
-              height: 180 + MediaQuery.of(context).viewPadding.top,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/img/hero-img.jpg"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            const GreetingWidget(),
             NotificationListener<ScrollUpdateNotification>(
               onNotification: (notif) {
-                if (scrollController.position.pixels > 180.0) {
+                if (scrollController.position.pixels > 230.0) {
                   setState(() {
                     isScrolled = false;
                   });
-                } else if (scrollController.position.pixels < 135.0) {
+                } else if (scrollController.position.pixels < 180.0) {
                   setState(() {
                     isScrolled = true;
                   });
@@ -110,7 +107,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                   return ListView(
                     controller: scrollController,
                     padding: EdgeInsets.only(
-                      top: 160 + MediaQuery.of(context).viewPadding.top,
+                      top: 240 + MediaQuery.of(context).viewPadding.top,
                     ),
                     children: [
                       Container(
@@ -124,26 +121,14 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                titleGroup('For you'),
-                                const Spacer(),
-                                const Expanded(
-                                  flex: 2,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 16),
-                                    child: SearchButton(tabIndex: 0),
-                                  )
-                                ),
-                              ],
-                            ),
+                            titleGroup('For you'),
                             const SizedBox(height: 16),
                             listArticleCard(),
                             featured(),
                             const SizedBox(height: 16),
                             clipArticle(),
                             trending(),
-                            titleGroup('Shorts'),
+                            titleGroup('Clips'),
                             reels(),
                             const SizedBox(height: 16),
                             recommended(),
@@ -172,11 +157,10 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
               return ClipArticleItem(
                 randomArticle: state.randomArticle,
                 onTap: () {
-                  context.pushNamed(
-                    RouteConstants.detailArticle,
+                  context.goNamed(
+                    RouteConstants.detailContent,
                     pathParameters: {
                       'id': state.randomArticle.id.toString(),
-                      'has_video': (state.randomArticle.hasVideo ?? false).toString(),
                     }
                   );
                 },
@@ -221,11 +205,10 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                 (ListArticles listArticles) => CardArticleItem(
                   listArticles: listArticles,
                   onTap: () {
-                    context.pushNamed(
-                      RouteConstants.detailArticle,
+                    context.goNamed(
+                      RouteConstants.detailContent,
                       pathParameters: {
                         'id': listArticles.id?.toString() ?? '0',
-                        'has_video': (listArticles.hasVideo ?? false).toString(),
                       }
                     );
                   }
@@ -267,11 +250,10 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                         SimpleArticleItem(
                           listArticles: listArticles,
                           onTap: () {
-                            context.pushNamed(
-                              RouteConstants.detailArticle,
+                            context.goNamed(
+                              RouteConstants.detailContent,
                               pathParameters: {
                                 'id': listArticles.id?.toString() ?? '0',
-                                'has_video': (listArticles.hasVideo ?? false).toString(),
                               }
                             );
                           },
@@ -326,11 +308,10 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                         SimpleArticleItem(
                           listArticles: listArticles,
                           onTap: () {
-                            context.pushNamed(
-                              RouteConstants.detailArticle,
+                            context.goNamed(
+                              RouteConstants.detailContent,
                               pathParameters: {
                                 'id': listArticles.id?.toString() ?? '0',
-                                'has_video': (listArticles.hasVideo ?? false).toString(),
                               }
                             );
                           },
@@ -385,11 +366,10 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                         SimpleArticleItem(
                           listArticles: listArticles,
                           onTap: () {
-                            context.pushNamed(
-                              RouteConstants.detailArticle,
+                            context.goNamed(
+                              RouteConstants.detailContent,
                               pathParameters: {
                                 'id': listArticles.id?.toString() ?? '0',
-                                'has_video': (listArticles.hasVideo ?? false).toString(),
                               }
                             );
                           },
@@ -436,7 +416,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
           );
         } else if (state is ListReelsCompleted) {
           shuffledReels ??= state.listReels.toList()..shuffle();
-          final limitedRandomReels = shuffledReels!.take(4).toList();
+          final limitedRandomReels = shuffledReels!.take(2).toList();
 
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),

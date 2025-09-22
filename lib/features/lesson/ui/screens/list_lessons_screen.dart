@@ -1,3 +1,6 @@
+import 'package:data_learns_247/core/utils/tab_bar_delegate.dart';
+import 'package:data_learns_247/features/chatbot/ui/screens/chatbot_screen.dart';
+import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,12 +18,11 @@ import 'package:data_learns_247/features/course/data/models/detail_course_model.
 import 'package:data_learns_247/features/course/ui/widgets/placeholder/enrolled_detail_course_placeholder.dart';
 import 'package:data_learns_247/features/lesson/ui/widgets/item/lesson_item.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
-import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 
 class ListLessonsScreen extends StatefulWidget {
-  final String id;
+  final String courseId;
 
-  const ListLessonsScreen({super.key, required this.id});
+  const ListLessonsScreen({super.key, required this.courseId});
 
   @override
   State<ListLessonsScreen> createState() {
@@ -33,8 +35,8 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.id.isNotEmpty) {
-      context.read<DetailCourseCubit>().fetchDetailCourse(widget.id);
+    if (widget.courseId.isNotEmpty) {
+      context.read<DetailCourseCubit>().fetchDetailCourse(widget.courseId);
       context.read<CourseSectionsCubit>().clearSections();
     }
   }
@@ -48,7 +50,7 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
         }
         if (state is DetailCourseCompleted) {
           return PopScope(
-            canPop: true,
+            canPop: false,
             onPopInvokedWithResult: (didPop, result) {
               if (!didPop) {
                 context.read<PageCubit>().setPage(2);
@@ -57,42 +59,73 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
                 );
               }
             },
-            child: Scaffold(
-              backgroundColor: kWhiteColor,
-              appBar: CustomAppBar(
-                showBackButton: true,
-                backAction: () {
-                  context.read<PageCubit>().setPage(2);
-                  context.pushNamed(
-                    RouteConstants.mainFrontPage,
-                  );
-                },
-              ),
-              body: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
+            child: DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                backgroundColor: kWhiteColor,
+                appBar: CustomAppBar(
+                  showBackButton: true,
+                  backAction: () {
+                    context.read<PageCubit>().setPage(2);
+                    context.pushNamed(
+                      RouteConstants.mainFrontPage,
+                    );
+                  },
+                ),
+                body: NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    SliverToBoxAdapter(
                       child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32
+                        ),
+                        child: detailCourseHeading(state.detailCourse),
+                      ),
+                    ),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: TabBarDelegate(
+                        const TabBar(
+                          indicatorColor: kGreenColor,
+                          labelColor: kBlackColor,
+                          tabs: [
+                            Tab(text: "Lessons"),
+                            Tab(text: "Chatbot"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  body: TabBarView(
+                    children: [
+                      // Tab 1: Lessons
+                      SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(
                           vertical: 16.0,
                           horizontal: 32.0,
                         ),
                         child: Column(
                           children: [
-                            detailCourseHeading(state.detailCourse),
-                            const SizedBox(height: 16),
                             if (state.detailCourse.sections != null)
                               courseSection(
                                 state.detailCourse.sections!,
-                                state.detailCourse.progress!
+                                state.detailCourse.progress!,
+                                state.detailCourse.chatbotId,
                               ),
                           ],
                         ),
-                      )
-                    ),
+                      ),
+                      // Tab 2: Chatbot
+                      state.detailCourse.chatbotId != null
+                          ? ChatbotScreen(
+                        chatbotId: state.detailCourse.chatbotId.toString(),
+                        courseId: state.detailCourse.id.toString(),
+                      ) : const Center(child: Text("Chatbot tidak tersedia")),
+                    ],
                   ),
-                ],
-              )
+                ),
+              ),
             ),
           );
         }
@@ -100,7 +133,7 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ErrorDialog.showErrorDialog(context, state.message, () {
               Navigator.of(context).pop();
-              context.read<DetailCourseCubit>().fetchDetailCourse(widget.id);
+              context.read<DetailCourseCubit>().fetchDetailCourse(widget.courseId);
             });
           });
         }
@@ -205,7 +238,7 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
     );
   }
 
-  Widget courseSection(List<Sections> sections, String progress) {
+  Widget courseSection(List<Sections> sections, String progress, String? chatbotId) {
     return Column(
       children: sections.map((section) {
         return Container(
@@ -239,10 +272,11 @@ class _ListLessonsScreenState extends State<ListLessonsScreen> {
                         );
                         context.pushNamed(
                           RouteConstants.lessonScreen,
-                          pathParameters: {
-                            'id': widget.id.toString(),
+                          queryParameters: {
                             'lessonId': lesson.lessonID.toString(),
-                          },
+                            'courseId': widget.courseId.toString(),
+                            'chatbotId': chatbotId
+                          }
                         );
                       },
                     );

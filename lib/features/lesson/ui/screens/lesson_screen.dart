@@ -1,8 +1,8 @@
+import 'package:data_learns_247/features/chatbot/ui/screens/chatbot_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
-import 'package:url_launcher/link.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:html/parser.dart';
 import 'package:go_router/go_router.dart';
@@ -20,14 +20,21 @@ import 'package:data_learns_247/features/lesson/ui/widgets/course_section_widget
 import 'package:data_learns_247/features/lesson/ui/widgets/bottom_navigation_bar_widget.dart';
 import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart';
 import 'package:data_learns_247/features/course/data/models/detail_course_model.dart';
+import 'package:data_learns_247/features/quiz/ui/screens/quiz_information_screen.dart';
 import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:data_learns_247/shared_ui/widgets/youtube_player.dart';
 
 class LessonScreen extends StatefulWidget {
-  final String id;
+  final String lessonId;
   final String courseId;
+  final String? chatbotId;
 
-  const LessonScreen({super.key, required this.id, required this.courseId});
+  const LessonScreen({
+    super.key,
+    required this.lessonId,
+    required this.courseId,
+    this.chatbotId
+  });
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
@@ -45,7 +52,7 @@ class _LessonScreenState extends State<LessonScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<LessonCubit>().fetchLesson(widget.id);
+    context.read<LessonCubit>().fetchLesson(widget.lessonId);
   }
 
   @override
@@ -85,7 +92,10 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   void youtubeControllerListener() {
-    if (!mounted || ytController == null) return;
+    if (!mounted || ytController == null) {
+      ytController?.setVolume(0);
+      return;
+    }
     if (!isSeeking && ytController!.value.isReady && lastPlaybackPosition != null) {
       isSeeking = true;
       ytController!.seekTo(Duration(seconds: lastPlaybackPosition!.toInt()));
@@ -152,13 +162,14 @@ class _LessonScreenState extends State<LessonScreen> {
           var title = titleDoc.querySelector('a')?.text;
           isComplete = state.lesson.isComplete ?? false;
           return PopScope(
-            canPop: true,
+            canPop: false,
             onPopInvokedWithResult: (didPop, result) {
               if (!didPop) {
-                context.pushNamed(
+                ytController?.setVolume(0);
+                context.goNamed(
                   RouteConstants.listLessons,
-                  pathParameters: {
-                    'id': widget.courseId.toString(),
+                  queryParameters: {
+                    'courseId': widget.courseId.toString(),
                   },
                 );
               }
@@ -168,10 +179,11 @@ class _LessonScreenState extends State<LessonScreen> {
               appBar: isFullScreen ? null : CustomAppBar(
                 showBackButton: true,
                 backAction: () {
-                  context.pushNamed(
+                  ytController?.setVolume(0);
+                  context.goNamed(
                     RouteConstants.listLessons,
-                    pathParameters: {
-                      'id': widget.courseId.toString(),
+                    queryParameters: {
+                      'courseId': widget.courseId.toString(),
                     },
                   );
                 },
@@ -202,7 +214,8 @@ class _LessonScreenState extends State<LessonScreen> {
                             sections: state.sections,
                             progress: state.progress,
                             courseId: widget.courseId,
-                            id: widget.id,
+                            id: widget.lessonId,
+                            chatbotId: widget.chatbotId,
                           ),
                         ),
                       );
@@ -225,8 +238,9 @@ class _LessonScreenState extends State<LessonScreen> {
                     BottomNavigationBarWidget(
                       lesson: state.lesson,
                       type: state.lesson.lessonType.toString(),
-                      lessonId: widget.id,
-                      courseId: widget.courseId
+                      lessonId: widget.lessonId,
+                      courseId: widget.courseId,
+                      chatbotId: widget.chatbotId,
                     )
                 ],
               )
@@ -251,7 +265,12 @@ class _LessonScreenState extends State<LessonScreen> {
       case 'article':
         return buildArticleLesson(content, title, isComplete);
       case 'quiz':
-        return buildQuizLesson(content);
+        return QuizInformationScreen(
+          quizId: content,
+          courseId: widget.courseId,
+          lessonId: widget.lessonId,
+          chatbotId: widget.chatbotId,
+        );
       default:
         return const Center(child: Text('Unsupported lesson type'));
     }
@@ -264,7 +283,7 @@ class _LessonScreenState extends State<LessonScreen> {
 
     return SafeArea(
       child: isFullScreen ? PopScope(
-        canPop: true,
+        canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           if (!didPop) {
             onExitFullScreen();
@@ -296,17 +315,46 @@ class _LessonScreenState extends State<LessonScreen> {
               ],
             ),
           ),
-          BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
-            builder: (context, state) {
-              if (state is CourseSectionsCompleted) {
-                return CourseSectionWidget(
-                  sections: state.sections,
-                  id: widget.id
-                );
-              }
-              return const Text('No sections available');
-            },
-          )
+          Expanded(
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  const TabBar(
+                    indicatorColor: kGreenColor,
+                    labelColor: kBlackColor,
+                    tabs: [
+                      Tab(text: "Lessons"),
+                      Tab(text: "Chatbot"),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
+                          builder: (context, state) {
+                            if (state is CourseSectionsCompleted) {
+                              return CourseSectionWidget(
+                                sections: state.sections,
+                                id: widget.lessonId,
+                                courseId: widget.courseId,
+                                chatbotId: widget.chatbotId,
+                              );
+                            }
+                            return const Text('No sections available');
+                          },
+                        ),
+                        widget.chatbotId != null ? ChatbotScreen(
+                          chatbotId: widget.chatbotId.toString(),
+                          courseId: widget.courseId.toString(),
+                        ) : const Center(child: Text("Chatbot tidak tersedia")),
+                      ]
+                    ),
+                  ),
+                ],
+              )
+            ),
+          ),
         ],
       ),
     );
@@ -317,7 +365,7 @@ class _LessonScreenState extends State<LessonScreen> {
 
     return SafeArea(
       child: isFullScreen ? PopScope(
-        canPop: true,
+        canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           if (!didPop) {
             onExitFullScreen();
@@ -415,17 +463,46 @@ class _LessonScreenState extends State<LessonScreen> {
               ],
             ),
           ),
-          BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
-            builder: (context, state) {
-              if (state is CourseSectionsCompleted) {
-                return CourseSectionWidget(
-                  sections: state.sections,
-                  id: widget.id
-                );
-              }
-              return const Text('No sections available');
-            },
-          )
+          Expanded(
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  const TabBar(
+                    indicatorColor: kGreenColor,
+                    labelColor: kBlackColor,
+                    tabs: [
+                      Tab(text: "Lessons"),
+                      Tab(text: "Chatbot"),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        BlocBuilder<CourseSectionsCubit, CourseSectionsState>(
+                          builder: (context, state) {
+                            if (state is CourseSectionsCompleted) {
+                              return CourseSectionWidget(
+                                sections: state.sections,
+                                id: widget.lessonId,
+                                courseId: widget.courseId,
+                                chatbotId: widget.chatbotId,
+                              );
+                            }
+                            return const Text('No sections available');
+                          },
+                        ),
+                        widget.chatbotId != null ? ChatbotScreen(
+                          chatbotId: widget.chatbotId.toString(),
+                          courseId: widget.courseId.toString(),
+                        ) : const Center(child: Text("Chatbot tidak tersedia")),
+                      ]
+                    ),
+                  ),
+                ],
+              )
+            ),
+          ),
         ],
       ),
     );
@@ -451,6 +528,7 @@ class _LessonScreenState extends State<LessonScreen> {
               ),
             ),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: elements.map((e) {
                 return HtmlContentParser.parseHtml(element: e, context: context);
               }).whereType<Widget>().toList(),
@@ -462,65 +540,6 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  Widget buildQuizLesson(String content) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Image(
-          image: AssetImage("assets/img/img_ill_2.png")
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 24,
-            horizontal: 26
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Quiz hanya dapat diakses melalui website data learns',
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(color: kBlackColor)
-              ),
-              const SizedBox(height: 28),
-              Text(
-                'Silahkan menuju website data learns untuk memulai mengerjakan quiz melalui link berikut ini:',
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(color: kBlackColor)
-              ),
-            ],
-          ),
-        ),
-        Link(
-          uri: Uri.parse(content),
-          target: LinkTarget.blank,
-          builder: (BuildContext ctx, FollowLink? openLink) {
-            return GestureDetector(
-              onTap: openLink,
-              child: Text(
-                'Link menuju quiz',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(
-                  color: kBlueColor,
-                  fontSize: 18,
-                  height: 1.6,
-                ),
-              ),
-            );
-          },
-        )
-      ],
-    );
-  }
-
   Widget youtubePlayer(YoutubePlayerController controller, bool isComplete) {
     return YoutubePlayerWidget(
       controller: controller,
@@ -528,7 +547,7 @@ class _LessonScreenState extends State<LessonScreen> {
       onExitFullScreen: onExitFullScreen,
       onEnded: () {
         if (!isComplete) {
-          context.read<FinishLessonCubit>().finishLesson(widget.id);
+          context.read<FinishLessonCubit>().finishLesson(widget.lessonId);
         }
       },
     );
@@ -564,7 +583,7 @@ class _LessonScreenState extends State<LessonScreen> {
               if (state is LessonCompleted) {
                 return FinishLessonButtonWidget(
                   isComplete: state.isComplete,
-                  id: widget.id,
+                  id: widget.lessonId,
                   type: type,
                 );
               }

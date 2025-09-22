@@ -49,15 +49,16 @@ class _CourseButtonWidgetState extends State<CourseButtonWidget> {
         if (isEnrolled) {
           context.pushNamed(
             RouteConstants.listLessons,
-            pathParameters: {'id': widget.id},
+            queryParameters: {
+              'courseId': widget.id
+            },
           );
         } else {
           showDialog(
             context: context,
             builder: (context) => AffirmationDialog(
               message: 'Apakah anda ingin mendaftar kelas ini?',
-              proceedText: 'Iya',
-              onPressed: () {
+              onProceed: () {
                 context.read<EnrollCourseCubit>().enrollCourse(widget.id);
                 context.pop();
                 setState(() {

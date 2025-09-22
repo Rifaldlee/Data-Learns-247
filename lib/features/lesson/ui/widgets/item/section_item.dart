@@ -8,6 +8,7 @@ class SectionItem extends StatelessWidget {
   final String courseId;
   final int sectionIndex;
   final bool isExpanded;
+  final String? chatbotId;
   final int Function(int, int) getLessonIndex;
 
   const SectionItem({
@@ -16,6 +17,7 @@ class SectionItem extends StatelessWidget {
     required this.courseId,
     required this.sectionIndex,
     required this.isExpanded,
+    this.chatbotId,
     required this.getLessonIndex,
   });
 
@@ -45,6 +47,7 @@ class SectionItem extends StatelessWidget {
             lessonIndex: lessonIndex,
             lessons: lesson,
             courseId: courseId,
+            chatbotId: chatbotId,
           );
         }).toList() ?? [],
       ),

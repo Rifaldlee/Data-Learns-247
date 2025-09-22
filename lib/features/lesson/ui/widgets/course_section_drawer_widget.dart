@@ -9,6 +9,7 @@ class CourseSectionDrawer extends StatelessWidget {
   final String progress;
   final String courseId;
   final String id;
+  final String? chatbotId;
 
   const CourseSectionDrawer({
     super.key,
@@ -16,6 +17,7 @@ class CourseSectionDrawer extends StatelessWidget {
     required this.progress,
     required this.courseId,
     required this.id,
+    this.chatbotId
   });
 
   @override
@@ -27,8 +29,8 @@ class CourseSectionDrawer extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 24
+              horizontal: 16,
+              vertical: 24
             ),
             child: Text(
               "Daftar Modul",
@@ -40,8 +42,8 @@ class CourseSectionDrawer extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(
-                vertical: 16,
-                horizontal: 8
+              vertical: 16,
+              horizontal: 8
             ),
             color: Colors.grey.withOpacity(0.1),
             child: Column(
@@ -56,8 +58,8 @@ class CourseSectionDrawer extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.fromLTRB(12, 8, 0, 0),
                   child: Text(
-                      '$progress% Selesai',
-                      style: Theme.of(context).textTheme.bodyMedium
+                    '$progress% Selesai',
+                    style: Theme.of(context).textTheme.bodyMedium
                   ),
                 )
               ],
@@ -71,7 +73,8 @@ class CourseSectionDrawer extends StatelessWidget {
             return SectionItemDrawer(
               section: section,
               courseId: courseId,
-              isExpanded: isExpanded
+              isExpanded: isExpanded,
+              chatbotId: chatbotId,
             );
           }),
         ],

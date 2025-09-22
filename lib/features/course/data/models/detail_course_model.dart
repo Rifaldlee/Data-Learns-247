@@ -16,7 +16,9 @@ class Course {
   String? courseFormat;
   List<Sections>? sections;
   String? body;
+  List<ListReels>? listReels;
   int? id;
+  String? chatbotId;
 
   Course({
     this.isEnrolled,
@@ -36,8 +38,10 @@ class Course {
     this.courseFormat,
     this.sections,
     this.body,
-    this.id
-  });
+    this.listReels,
+    this.id,
+    this.chatbotId
+      });
 
   Course.fromJson(Map<String, dynamic> json) {
     isEnrolled = json['is_enrolled'];
@@ -62,7 +66,14 @@ class Course {
       });
     }
     body = json['body'];
+    if (json['list_reels'] != null) {
+      listReels = <ListReels>[];
+      json['list_reels'].forEach((v) {
+        listReels!.add(ListReels.fromJson(v));
+      });
+    }
     id = json['id'];
+    chatbotId = json['chatbotId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -86,7 +97,11 @@ class Course {
       data['sections'] = sections!.map((v) => v.toJson()).toList();
     }
     data['body'] = body;
+    if (listReels != null) {
+      data['list_reels'] = listReels!.map((v) => v.toJson()).toList();
+    }
     data['id'] = id;
+    data['chatbotId'] = chatbotId;
     return data;
   }
 }
@@ -141,6 +156,28 @@ class Lessons {
     data['lesson_title'] = lessonTitle;
     data['lesson_type'] = lessonType;
     data['is_complete'] = isComplete;
+    return data;
+  }
+}
+
+class ListReels {
+  String? title;
+  String? videoUrl;
+  int? id;
+
+  ListReels({this.title, this.videoUrl, this.id});
+
+  ListReels.fromJson(Map<String, dynamic> json) {
+    title = json['title'];
+    videoUrl = json['video_url'];
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['title'] = title;
+    data['video_url'] = videoUrl;
+    data['id'] = id;
     return data;
   }
 }

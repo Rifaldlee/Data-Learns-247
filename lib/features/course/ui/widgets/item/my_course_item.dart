@@ -3,6 +3,7 @@ import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:data_learns_247/core/theme/color.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -13,6 +14,7 @@ class MyCourseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final unescape = HtmlUnescape();
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -47,7 +49,7 @@ class MyCourseItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            myCoursesList.title!,
+                            unescape.convert(myCoursesList.title!),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

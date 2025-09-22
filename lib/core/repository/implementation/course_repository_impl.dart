@@ -8,7 +8,7 @@ import 'package:data_learns_247/features/course/data/models/my_courses_list_mode
 import 'package:data_learns_247/features/course/data/response/course_response.dart';
 import 'package:data_learns_247/features/course/data/models/list_courses_model.dart';
 
-class CourseRepositoryImpl implements CourseRepository {
+class CourseRepositoryImpl extends CourseRepository {
 
   @override
   Future<List<ListCourses>?> getListCourses() async {

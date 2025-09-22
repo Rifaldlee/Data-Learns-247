@@ -25,6 +25,7 @@ class ListArticlesCubit extends Cubit<ListArticlesState> {
       }
     } catch (e) {
       emit(ListArticlesError(e.toString()));
+      print(e.toString());
     }
   }
 }

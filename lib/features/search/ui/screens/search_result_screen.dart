@@ -51,7 +51,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: PopScope(
-        canPop: true,
+        canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           if(!didPop) {
             context.pushNamed(

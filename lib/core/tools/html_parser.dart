@@ -1,6 +1,6 @@
+import 'package:data_learns_247/shared_ui/widgets/code_block_widget.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/link.dart';
@@ -266,6 +266,34 @@ class HtmlContentParser {
         );
 
       case 'figure':
+        if (element.classes.contains('wp-block-table')) {
+          final rows = element.getElementsByTagName('tr');
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Table(
+              border: TableBorder.all(color: kLightGreyColor),
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              columnWidths: const {},
+              children: rows.map((row) {
+                final cells = row.getElementsByTagName('th') + row.getElementsByTagName('td');
+                return TableRow(
+                  children: cells.map((cell) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        cell.text.trim(),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: kBlackColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              }).toList(),
+            ),
+          );
+        }
         var img = element.getElementsByTagName('img')[0];
         String src = img.attributes['src']?? '';
         return Padding(
@@ -309,38 +337,7 @@ class HtmlContentParser {
         );
 
       case 'code':
-      case 'pre':
-        {
-          ScrollController scrollController = ScrollController();
-          return Scrollbar(
-            thumbVisibility: true,
-            controller: scrollController,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 6
-              ),
-              margin: const EdgeInsets.only(top: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: kCodeBackgroundColor,
-                border: Border.all(color: kLightGreyColor)
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                controller: scrollController,
-                child: Text(
-                  element.text,
-                  style: GoogleFonts.sourceCodePro(
-                    color: kBlackColor,
-                    fontSize: 14
-                  ),
-                ),
-              ),
-            ),
-          );
-        }
+      case 'pre': {return CodeBlockWidget(text: element.text);}
 
       case 'span':
         if (element.classes.contains('lifterlms-price')) {
@@ -353,6 +350,21 @@ class HtmlContentParser {
         }
 
       case 'div':
+        if (element.classes.contains('wp-block-kevinbatdorf-code-block-pro')) {
+          return CodeBlockWidget(text: element.text);
+        }
+        if (element.classes.contains('kt-inside-inner-col')) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: element.children.map((child) {
+              return HtmlContentParser.parseHtml(
+                  element: child,
+                  context: context
+              );
+            }).whereType<Widget>().toList(),
+          );
+        }
+
         if (element.id == '--description') {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

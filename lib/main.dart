@@ -1,3 +1,4 @@
+import 'package:data_learns_247/features/greeting/cubit/greeting_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,13 @@ import 'package:data_learns_247/features/course/cubit/course_sections_cubit.dart
 import 'package:data_learns_247/features/course/cubit/my_courses_list_cubit.dart';
 import 'package:data_learns_247/features/reels/cubit/detail_reels_cubit.dart';
 import 'package:data_learns_247/features/reels/cubit/list_reels_cubit.dart';
+import 'package:data_learns_247/features/reels/cubit/analytic_reels_cubit.dart';
+import 'package:data_learns_247/features/quiz/cubit/attempt_detail_cubit.dart';
+import 'package:data_learns_247/features/quiz/cubit/end_quiz_cubit.dart';
+import 'package:data_learns_247/features/quiz/cubit/quiz_information_cubit.dart';
+import 'package:data_learns_247/features/quiz/cubit/start_quiz_cubit.dart';
+import 'package:data_learns_247/features/quiz/cubit/quiz_logic_cubit.dart';
+import 'package:data_learns_247/features/certificate/cubit/certificate_cubit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -80,6 +88,14 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => CourseSectionsCubit()),
         BlocProvider(create: (context) => ListReelsCubit()),
         BlocProvider(create: (context) => DetailReelsCubit()),
+        BlocProvider(create: (context) => AnalyticReelsCubit()),
+        BlocProvider(create: (context) => QuizInformationCubit()),
+        BlocProvider(create: (context) => StartQuizCubit()),
+        BlocProvider(create: (context) => EndQuizCubit()),
+        BlocProvider(create: (context) => AttemptDetailCubit()),
+        BlocProvider(create: (context) => QuizLogicCubit()),
+        BlocProvider(create: (context) => CertificateCubit()),
+        BlocProvider(create: (context) => GreetingCubit()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

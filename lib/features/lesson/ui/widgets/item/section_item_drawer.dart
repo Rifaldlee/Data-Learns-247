@@ -8,19 +8,21 @@ class SectionItemDrawer extends StatelessWidget {
   final Sections section;
   final String courseId;
   final bool isExpanded;
+  final String? chatbotId;
 
   const SectionItemDrawer({
     super.key,
     required this.section,
     required this.courseId,
     required this.isExpanded,
+    this.chatbotId
   });
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-          dividerColor: Colors.transparent
+        dividerColor: Colors.transparent
       ),
       child: ExpansionTile(
         initiallyExpanded: isExpanded,
@@ -50,7 +52,8 @@ class SectionItemDrawer extends StatelessWidget {
         children: section.lessons?.map((lesson) {
           return SectionChildItemDrawer(
             lessons: lesson,
-            courseId: courseId
+            courseId: courseId,
+            chatbotId: chatbotId,
           );
         }).toList() ?? [],
       ),

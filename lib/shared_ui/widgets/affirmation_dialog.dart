@@ -5,14 +5,16 @@ class AffirmationDialog extends StatelessWidget {
   final String message;
   final String cancelText;
   final String proceedText;
-  final Function() onPressed;
+  final Function() onProceed;
+  final Function()? onCancel;
 
   const AffirmationDialog({
     super.key,
     required this.message,
     this.cancelText = 'Batal',
-    required this.proceedText,
-    required this.onPressed
+    this.proceedText = 'Iya',
+    required this.onProceed,
+    this.onCancel,
   });
 
   @override
@@ -58,9 +60,7 @@ class AffirmationDialog extends StatelessWidget {
                         Expanded(
                           flex : 2,
                           child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
+                            onPressed: onCancel ?? () => Navigator.pop(context),
                             style: OutlinedButton.styleFrom(
                               fixedSize: const Size(
                                 double.infinity,
@@ -85,11 +85,11 @@ class AffirmationDialog extends StatelessWidget {
                             ),
                           ),
                         ),
-                          const SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Expanded(
                           flex: 2,
                           child: TextButton(
-                            onPressed: onPressed,
+                            onPressed: onProceed,
                             style: TextButton.styleFrom(
                               backgroundColor: kGreenColor,
                               fixedSize: const Size(

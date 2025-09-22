@@ -12,7 +12,7 @@ class DetailReelsInitial extends DetailReelsState {}
 class DetailReelsLoading extends DetailReelsState {}
 
 class DetailReelsCompleted extends DetailReelsState {
-  final DetailReels detailReels;
+  final List<DetailReels> detailReels;
 
   const DetailReelsCompleted(this.detailReels);
 

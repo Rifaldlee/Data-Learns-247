@@ -6,6 +6,7 @@ class ListArticles {
   String? author;
   String? authorPhoto;
   String? dateCreated;
+  String? category;
   int? id;
   bool? hasVideo;
 
@@ -17,6 +18,7 @@ class ListArticles {
     this.author,
     this.authorPhoto,
     this.dateCreated,
+    this.category,
     this.id,
     this.hasVideo
   });
@@ -29,6 +31,7 @@ class ListArticles {
     author = json['author'];
     authorPhoto = json['author_photo'];
     dateCreated = json['date_created'];
+    category = json['category'];
     id = json['id'];
     hasVideo = json['has_video'];
   }
@@ -42,6 +45,7 @@ class ListArticles {
     data['author'] = author;
     data['author_photo'] = authorPhoto;
     data['date_created'] = dateCreated;
+    data['category'] = category;
     data['id'] = id;
     data['has_video'] = hasVideo;
     return data;

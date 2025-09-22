@@ -1,3 +1,4 @@
+import 'package:data_learns_247/core/route/page_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
@@ -77,7 +78,7 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
 
     if (previousArticle != null) {
       navigationCubit.removeLastFromHistory();
-      context.pushReplacementNamed(
+      context.pushNamed(
         RouteConstants.detailArticle,
         pathParameters: {
           'id': previousArticle.id,
@@ -86,7 +87,10 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
       );
     } else {
       navigationCubit.clearHistory();
-      context.pop();
+      context.read<PageCubit>().setPage(0);
+      context.pushNamed(
+        RouteConstants.mainFrontPage,
+      );
     }
   }
 
@@ -193,10 +197,10 @@ class _DetailArticleScreenState extends State<DetailArticleScreen> {
             initializeYoutubeController(state.detailArticle.body!);
           }
           return PopScope(
-            canPop: true,
+            canPop: false,
             onPopInvokedWithResult: (didPop, result) {
               if (!didPop) {
-                handleBackNavigation;
+                handleBackNavigation();
               }
             },
             child: SafeArea(

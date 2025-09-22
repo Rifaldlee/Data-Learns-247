@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:data_learns_247/core/theme/color.dart';
 import 'package:data_learns_247/features/course/data/models/list_courses_model.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
+import 'package:html_unescape/html_unescape.dart';
 
 class CourseItem extends StatelessWidget {
   final ListCourses listCourses;
@@ -12,6 +13,7 @@ class CourseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final unescape = HtmlUnescape();
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -43,7 +45,7 @@ class CourseItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      listCourses.title!,
+                      unescape.convert(listCourses.title!),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

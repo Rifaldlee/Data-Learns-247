@@ -8,6 +8,7 @@ class Article {
   String? userPicture;
   String? fieldImage;
   String? body;
+  String? category;
   int? id;
   List<ListLink>? listLink;
 
@@ -19,6 +20,7 @@ class Article {
     this.userPicture,
     this.fieldImage,
     this.body,
+    this.category,
     this.id,
     this.listLink
   });
@@ -31,6 +33,7 @@ class Article {
     userPicture = json['user_picture'];
     fieldImage = json['field_image'];
     body = json['body'];
+    category = json['category'];
     id = json['id'];
     if (json['list_link'] != null) {
       listLink = <ListLink>[];
@@ -49,6 +52,7 @@ class Article {
     data['user_picture'] = userPicture;
     data['field_image'] = fieldImage;
     data['body'] = body;
+    data['category'] = category;
     data['id'] = id;
     if (listLink != null) {
       data['list_link'] = listLink!.map((v) => v.toJson()).toList();

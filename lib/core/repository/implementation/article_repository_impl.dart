@@ -14,7 +14,7 @@ class ArticleRepositoryImpl extends ArticleRepository{
       final response = await NetworkService.sendRequest(
         requestType: RequestType.get,
         baseUrl: API.publicBaseAPI,
-        endpoint: API.listArticles,
+        endpoint: API.listContents,
         useBearer: true
       );
       return NetworkHelper.filterResponse(
@@ -34,7 +34,7 @@ class ArticleRepositoryImpl extends ArticleRepository{
       final response = await NetworkService.sendRequest(
         requestType: RequestType.get,
         baseUrl: API.publicBaseAPI,
-        endpoint: API.featuredArticles,
+        endpoint: API.featuredContents,
         useBearer: true
       );
       return NetworkHelper.filterResponse(
@@ -54,7 +54,7 @@ class ArticleRepositoryImpl extends ArticleRepository{
       final response = await NetworkService.sendRequest(
         requestType: RequestType.get,
         baseUrl: API.publicBaseAPI,
-        endpoint: API.recommendedArticles,
+        endpoint: API.recommendedContents,
         useBearer: true
       );
       return NetworkHelper.filterResponse(
@@ -74,7 +74,7 @@ class ArticleRepositoryImpl extends ArticleRepository{
       final response = await NetworkService.sendRequest(
         requestType: RequestType.get,
         baseUrl: API.publicBaseAPI,
-        endpoint: API.trendingArticles,
+        endpoint: API.trendingContents,
         useBearer: true
       );
       return NetworkHelper.filterResponse(
@@ -94,8 +94,8 @@ class ArticleRepositoryImpl extends ArticleRepository{
       final response = await NetworkService.sendRequest(
         requestType: RequestType.get,
         baseUrl: API.publicBaseAPI,
-        endpoint: API.detailArticle,
-        queryParam: QP.detailArticleQP(id: id),
+        endpoint: API.detailContent,
+        queryParam: QP.detailContentQP(id: id),
         useBearer: true
       );
       return NetworkHelper.filterResponse(

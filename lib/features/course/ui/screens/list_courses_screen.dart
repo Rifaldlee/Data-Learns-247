@@ -71,8 +71,8 @@ class _ListCoursesScreen extends State<ListCoursesScreen> {
                         onTap: () {
                           context.pushNamed(
                             RouteConstants.detailCourse,
-                            pathParameters: {
-                              'id': listCourses.id?.toString() ?? '0'
+                            queryParameters: {
+                              'courseId': listCourses.id?.toString() ?? '0'
                             }
                           );
                         },
