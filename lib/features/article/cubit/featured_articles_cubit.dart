@@ -18,8 +18,8 @@ class FeaturedArticlesCubit extends Cubit<FeaturedArticlesState> {
 
       List<ListArticles>? featuredArticle = await GetFeaturedArticles(_articleRepository).call();
 
-      if (featuredArticle!.isEmpty) {
-        emit(const FeaturedArticlesError('No data available'));
+      if (featuredArticle == null || featuredArticle.isEmpty) {
+        emit(const FeaturedArticlesEmpty());
       } else {
         emit(FeaturedArticlesCompleted(featuredArticle));
       }

@@ -18,8 +18,8 @@ class TrendingArticlesCubit extends Cubit<TrendingArticlesState> {
 
       List<ListArticles>? trendingArticle = await GetTrendingArticles(_articleRepository).call();
 
-      if (trendingArticle!.isEmpty) {
-        emit(const TrendingArticlesError('No data available'));
+      if (trendingArticle == null || trendingArticle.isEmpty) {
+        emit(const TrendingArticlesEmpty());
       } else {
         emit(TrendingArticlesCompleted(trendingArticle));
       }

@@ -29,3 +29,6 @@ class ListArticlesError extends ListArticlesState {
   List<Object> get props => [message];
 }
 
+class ListArticlesEmpty extends ListArticlesState {
+  const ListArticlesEmpty();
+}

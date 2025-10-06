@@ -18,14 +18,13 @@ class ListArticlesCubit extends Cubit<ListArticlesState> {
 
       List<ListArticles>? listArticle = await GetListArticles(_articleRepository).call();
 
-      if (listArticle!.isEmpty) {
-        emit(const ListArticlesError('No data available'));
+      if (listArticle == null || listArticle.isEmpty) {
+        emit(const ListArticlesEmpty());
       } else {
         emit(ListArticlesCompleted(listArticle));
       }
     } catch (e) {
       emit(ListArticlesError(e.toString()));
-      print(e.toString());
     }
   }
 }

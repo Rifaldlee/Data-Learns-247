@@ -225,6 +225,8 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
               showErrorDialog(state.message);
             }
           });
+        } else if (state is ListArticlesEmpty) {
+          return const SizedBox.shrink();
         }
         return const SizedBox.shrink();
       },
@@ -283,6 +285,8 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
               showErrorDialog(state.message);
             }
           });
+        } else if (state is FeaturedArticlesEmpty) {
+          return const SizedBox.shrink();
         }
         return const SizedBox.shrink();
       },
@@ -341,6 +345,8 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
               showErrorDialog(state.message);
             }
           });
+        } else if (state is RecommendedArticlesEmpty) {
+          return const SizedBox.shrink();
         }
         return const SizedBox.shrink();
       },
@@ -399,6 +405,8 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
               showErrorDialog(state.message);
             }
           });
+        } else if (state is TrendingArticlesEmpty) {
+          return const SizedBox.shrink();
         }
         return const SizedBox.shrink();
       },
@@ -451,6 +459,8 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             showErrorDialog(state.message);
           });
+        } else if (state is ListReelsEmpty) {
+          return const SizedBox.shrink();
         }
         return const SizedBox.shrink();
       },

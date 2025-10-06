@@ -255,7 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: PersonalInfoItem(
               icon: Icons.phone_android,
               title: 'Versi Aplikasi',
-              content: "1.08.18"
+              content: "1.09.22"
             ),
           ),
         ),

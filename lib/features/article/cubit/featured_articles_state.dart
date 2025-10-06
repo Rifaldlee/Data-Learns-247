@@ -28,3 +28,7 @@ class FeaturedArticlesError extends FeaturedArticlesState {
   @override
   List<Object> get props => [message];
 }
+
+class FeaturedArticlesEmpty extends FeaturedArticlesState {
+  const FeaturedArticlesEmpty();
+}

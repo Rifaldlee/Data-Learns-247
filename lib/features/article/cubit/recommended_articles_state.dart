@@ -28,3 +28,7 @@ class RecommendedArticlesError extends RecommendedArticlesState {
   @override
   List<Object> get props => [message];
 }
+
+class RecommendedArticlesEmpty extends RecommendedArticlesState {
+  const RecommendedArticlesEmpty();
+}

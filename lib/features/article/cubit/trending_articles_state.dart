@@ -28,3 +28,7 @@ class TrendingArticlesError extends TrendingArticlesState {
   @override
   List<Object> get props => [message];
 }
+
+class TrendingArticlesEmpty extends TrendingArticlesState {
+  const TrendingArticlesEmpty();
+}

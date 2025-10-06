@@ -28,3 +28,7 @@ class ListReelsError extends ListReelsState {
   @override
   List<Object> get props => [message];
 }
+
+class ListReelsEmpty extends ListReelsState {
+  const ListReelsEmpty();
+}

@@ -1,7 +1,7 @@
 class API {
   API._();
 
-  static const publicBaseAPI = 'https://learn.solusi247.com:9991/wp-json/wp/v2/';
+  static const publicBaseAPI = 'https://learn.solusi247.com/wp-json/wp/v2/';
   static const chatbotBaseUrl = 'http://82.112.234.17:3000/api/v1/prediction/';
 
   static const search = 'search';

@@ -18,8 +18,8 @@ class RecommendedArticlesCubit extends Cubit<RecommendedArticlesState> {
 
       List<ListArticles>? recommendedArticle = await GetRecommendedArticles(_articleRepository).call();
 
-      if (recommendedArticle!.isEmpty) {
-        emit(const RecommendedArticlesError('No data available'));
+      if (recommendedArticle == null || recommendedArticle.isEmpty) {
+        emit(const RecommendedArticlesEmpty());
       } else {
         emit(RecommendedArticlesCompleted(recommendedArticle));
       }

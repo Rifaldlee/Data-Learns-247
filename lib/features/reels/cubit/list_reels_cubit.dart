@@ -18,8 +18,8 @@ class ListReelsCubit extends Cubit<ListReelsState> {
 
       List<ListReels>? listReel = await GetListReels(_reelRepository).call();
 
-      if (listReel!.isEmpty) {
-        emit(const ListReelsError('No data available'));
+      if (listReel == null || listReel.isEmpty) {
+        emit(const ListReelsEmpty());
       } else {
         emit(ListReelsCompleted(listReel));
       }
