@@ -17,4 +17,6 @@ class RouteConstants {
   static String attemptDetail = 'attempt_detail';
   static String quizResult = 'quiz_result';
   static String certificate = 'certificate';
+  static String listTrainingRequest = 'list_training_request';
+  static String detailTrainingRequest = 'detail_training_request';
 }

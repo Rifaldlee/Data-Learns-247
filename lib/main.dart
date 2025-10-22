@@ -1,4 +1,3 @@
-import 'package:data_learns_247/features/greeting/cubit/greeting_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,6 +34,9 @@ import 'package:data_learns_247/features/quiz/cubit/quiz_information_cubit.dart'
 import 'package:data_learns_247/features/quiz/cubit/start_quiz_cubit.dart';
 import 'package:data_learns_247/features/quiz/cubit/quiz_logic_cubit.dart';
 import 'package:data_learns_247/features/certificate/cubit/certificate_cubit.dart';
+import 'package:data_learns_247/features/greeting/cubit/greeting_cubit.dart';
+import 'package:data_learns_247/features/request_training/cubit/request_training_detail_cubit.dart';
+import 'package:data_learns_247/features/request_training/cubit/request_training_list_cubit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -96,6 +98,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => QuizLogicCubit()),
         BlocProvider(create: (context) => CertificateCubit()),
         BlocProvider(create: (context) => GreetingCubit()),
+        // BlocProvider(create: (context) => RequestTrainingListCubit()),
+        // BlocProvider(create: (context) => RequestTrainingDetailCubit())
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:data_learns_247/features/article/ui/screens/detail_content_screen.dart';
+import 'package:data_learns_247/features/request_training/ui/screens/detail_request_training_screen.dart';
+import 'package:data_learns_247/features/request_training/ui/screens/list_request_training_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -65,6 +67,23 @@ class AppRouter {
               pageBuilder: (context, state) {
                 return const MaterialPage(child: CertificateScreen());
               }
+            ),
+            GoRoute(
+              name: RouteConstants.listTrainingRequest,
+              path: 'listRequestTraining',
+              pageBuilder: (context, state) {
+                return const MaterialPage(child: RequestTrainingListScreen());
+              },
+              routes: [
+                GoRoute(
+                  name: RouteConstants.detailTrainingRequest,
+                  path: 'detailRequestTraining',
+                  pageBuilder: (context, state) {
+                    final requestTrainingId = state.uri.queryParameters['requestTrainingId']!;
+                    return MaterialPage(child: RequestTrainingDetailScreen(id: requestTrainingId));
+                  }
+                )
+              ]
             ),
             GoRoute(
               name:  RouteConstants.searchScreen,

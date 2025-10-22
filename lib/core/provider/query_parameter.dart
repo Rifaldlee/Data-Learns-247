@@ -9,4 +9,5 @@ class QP {
   static Map<String, String> attemptQuizQP({required String id}) => {'id': id };
   static Map<String, String> startQuizQP({required String id}) => {'id': id };
   static Map<String, String> searchQP({required String query}) => {'q': query };
+  static Map<String, String> detailRequestTrainingQP({required String id}) => {'id': id};
 }

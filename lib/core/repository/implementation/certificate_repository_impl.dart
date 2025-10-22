@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:data_learns_247/core/provider/api.dart';
 import 'package:data_learns_247/core/provider/network_helper.dart';
 import 'package:data_learns_247/core/provider/network_service.dart';

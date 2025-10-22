@@ -222,27 +222,37 @@ class _DetailCourseScreen extends State<DetailCourseScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                courseInformationItem(
-                  'Course Code',
-                  ' : ${course.courseCode.toString()}'
+                course.courseCode?.isEmpty ?? true
+                    ? const SizedBox.shrink()
+                    : courseInformationItem(
+                    'Course Code',
+                    ' : ${course.courseCode.toString()}'
                 ),
                 const SizedBox(height: 8),
-                courseInformationItem(
+                course.courseType?.isEmpty ?? true
+                    ? const SizedBox.shrink()
+                    : courseInformationItem(
                   'Course Type',
                   ' : ${course.courseType.toString()}'
                 ),
                 const SizedBox(height: 8),
-                courseInformationItem(
+                course.duration?.isEmpty ?? true
+                    ? const SizedBox.shrink()
+                    : courseInformationItem(
                   'Duration',
                   ' : ${course.duration.toString()}'
                 ),
                 const SizedBox(height: 8),
-                courseInformationItem(
+                course.difficulty?.isEmpty ?? true
+                    ? const SizedBox.shrink()
+                    : courseInformationItem(
                   'Skill Level',
                   ' : ${course.difficulty.toString()}'
                 ),
                 const SizedBox(height: 8),
-                courseInformationItem(
+                course.courseFormat?.isEmpty ?? true
+                    ? const SizedBox.shrink()
+                    : courseInformationItem(
                   'Course Format',
                   ' : ${course.courseFormat.toString()}'
                 ),

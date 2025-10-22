@@ -78,22 +78,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String city,
     String birth
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextWithShader(
-          text: 'Profile',
-          textStyle: Theme.of(context).textTheme.headlineMedium!,
-        ),
-        const SizedBox(height: 16),
-        profileHeader(avatarLink, name, email),
-        const SizedBox(height: 12),
-        personalInfo(organization, city, birth),
-        const SizedBox(height: 12),
-        appVersion(),
-        const Spacer(),
-        logoutButton(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextWithShader(
+            text: 'Profile',
+            textStyle: Theme.of(context).textTheme.headlineMedium!,
+          ),
+          const SizedBox(height: 16),
+          profileHeader(avatarLink, name, email),
+          const SizedBox(height: 12),
+          personalInfo(organization, city, birth),
+          const SizedBox(height: 12),
+          appVersion(),
+          const SizedBox(height: 24),
+          logoutButton(),
+        ],
+      ),
     );
   }
 
@@ -224,6 +226,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ]
                   ),
                 ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: () {
+                    context.pushNamed(
+                      RouteConstants.listTrainingRequest
+                    );
+                  },
+                  child: const Row(
+                    children:[
+                      Expanded(
+                        child: PersonalInfoItem(
+                          icon: Icons.article_outlined,
+                          title: 'Request Training',
+                          content: 'Pelatihan yang anda ajukan',
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: kBlueColor,
+                        size: 42,
+                      )
+                    ]
+                  ),
+                ),
               ],
             ),
           ),
@@ -255,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: PersonalInfoItem(
               icon: Icons.phone_android,
               title: 'Versi Aplikasi',
-              content: "1.09.22"
+              content: "1.10.10"
             ),
           ),
         ),
