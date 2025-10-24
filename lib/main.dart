@@ -98,8 +98,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => QuizLogicCubit()),
         BlocProvider(create: (context) => CertificateCubit()),
         BlocProvider(create: (context) => GreetingCubit()),
-        // BlocProvider(create: (context) => RequestTrainingListCubit()),
-        // BlocProvider(create: (context) => RequestTrainingDetailCubit())
+        BlocProvider(create: (context) => RequestTrainingListCubit()),
+        BlocProvider(create: (context) => RequestTrainingDetailCubit())
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

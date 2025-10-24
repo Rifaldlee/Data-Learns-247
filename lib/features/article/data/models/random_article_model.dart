@@ -6,6 +6,7 @@ class RandomArticle {
   final String author;
   final String authorPhoto;
   final String dateCreated;
+  String? category;
   final String id;
   final bool? hasVideo;
 
@@ -17,6 +18,7 @@ class RandomArticle {
     required this.author,
     required this.authorPhoto,
     required this.dateCreated,
+    required this.category,
     required this.id,
     required this.hasVideo
   });

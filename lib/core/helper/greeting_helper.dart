@@ -1,7 +1,23 @@
 import 'package:data_learns_247/features/greeting/greeting_model.dart';
 
 extension GreetingHelper on Greeting {
-  String? getImageByTime(String time) {
+
+  String? getTime() {
+    final hour = DateTime.now().hour;
+
+    if (hour >= 4 && hour < 11) { // pagi (04:00–10:59)
+      return 'pagi';
+    } else if (hour >= 11 && hour < 15) { // siang (11:00–14:59)
+      return 'siang';
+    } else if (hour >= 15 && hour < 18) { // sore (15:00–17:59)
+      return 'sore';
+    } else { // malam (18:00–04:59)
+      return 'malam';
+    }
+  }
+
+  String? getImageByTime() {
+    final time = getTime();
     switch (time) {
       case 'pagi':
         return pagi?.image;
@@ -16,7 +32,8 @@ extension GreetingHelper on Greeting {
     }
   }
 
-  String? getTextByTime(String time) {
+  String? getTextByTime() {
+    final time = getTime();
     switch (time) {
       case 'pagi':
         return pagi?.text;
@@ -30,4 +47,6 @@ extension GreetingHelper on Greeting {
         return null;
     }
   }
+
+
 }

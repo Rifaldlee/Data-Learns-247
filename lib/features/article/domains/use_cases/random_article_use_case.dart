@@ -28,6 +28,7 @@ class GetRandomArticle {
           author: selectedArticle.author.toString(),
           authorPhoto: selectedArticle.authorPhoto.toString(),
           dateCreated: selectedArticle.dateCreated.toString(),
+          category: selectedArticle.category.toString(),
           id: selectedArticle.id.toString(),
           hasVideo: selectedArticle.hasVideo,
         );

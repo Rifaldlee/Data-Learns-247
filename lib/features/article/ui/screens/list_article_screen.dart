@@ -1,7 +1,5 @@
 import 'package:data_learns_247/features/authentication/cubit/user_cubit.dart';
 import 'package:data_learns_247/features/greeting/ui/widgets/greeting_widget.dart';
-import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -91,11 +89,11 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
             const GreetingWidget(),
             NotificationListener<ScrollUpdateNotification>(
               onNotification: (notif) {
-                if (scrollController.position.pixels > 230.0) {
+                if (scrollController.position.pixels > 335.0) {
                   setState(() {
                     isScrolled = false;
                   });
-                } else if (scrollController.position.pixels < 180.0) {
+                } else if (scrollController.position.pixels < 300.0) {
                   setState(() {
                     isScrolled = true;
                   });
@@ -107,7 +105,7 @@ class _ListArticlesScreenState extends State<ListArticlesScreen> {
                   return ListView(
                     controller: scrollController,
                     padding: EdgeInsets.only(
-                      top: 240 + MediaQuery.of(context).viewPadding.top,
+                      top: 340 + MediaQuery.of(context).viewPadding.top,
                     ),
                     children: [
                       Container(
