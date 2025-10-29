@@ -29,12 +29,14 @@ class API {
   static const endQuiz = 'end-quiz';
   static const quizAttempt = 'attempt-detail';
 
+  static const requestTrainingList = 'requests';
+  static const requestTrainingDetail = 'request';
+
   static const certificate = 'certificate';
 
   static const greetingImage = 'greeting';
 
-  static const requestTrainingList = 'requests';
-  static const requestTrainingDetail = 'request';
+  static const notification = 'list-notifications';
 
   static const login = '?rest_route=/api-login/v1/auth';
   static const register = 'users/register';

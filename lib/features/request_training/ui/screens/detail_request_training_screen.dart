@@ -5,7 +5,6 @@ import 'package:data_learns_247/features/request_training/data/models/request_tr
 import 'package:data_learns_247/shared_ui/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -74,7 +73,7 @@ class _RequestTrainingDetailState extends State<RequestTrainingDetailScreen> {
             ),
           );
         } else if (state is RequestTrainingDetailError) {
-          print("GALAT : ${state.message}");
+
         }
         return const SizedBox.shrink();
       }

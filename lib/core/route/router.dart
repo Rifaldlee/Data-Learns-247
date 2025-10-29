@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:data_learns_247/features/article/ui/screens/detail_content_screen.dart';
+import 'package:data_learns_247/features/notification/ui/screens/notification_screen.dart';
 import 'package:data_learns_247/features/request_training/ui/screens/detail_request_training_screen.dart';
 import 'package:data_learns_247/features/request_training/ui/screens/list_request_training_screen.dart';
 import 'package:flutter/material.dart';
@@ -249,7 +250,14 @@ class AppRouter {
                 final id = state.pathParameters['id']!;
                 return MaterialPage(child: DetailReelsScreen(id: id));
               }
-            )
+            ),
+            GoRoute(
+              name: RouteConstants.notification,
+              path: 'notification',
+              pageBuilder: (context, state) {
+                return const MaterialPage(child: NotificationScreen());
+              }
+            ),
           ],
         ),
       ],

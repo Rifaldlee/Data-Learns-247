@@ -19,4 +19,5 @@ class RouteConstants {
   static String certificate = 'certificate';
   static String listTrainingRequest = 'list_training_request';
   static String detailTrainingRequest = 'detail_training_request';
+  static String notification = 'notification';
 }

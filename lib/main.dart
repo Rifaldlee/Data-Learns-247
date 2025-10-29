@@ -37,6 +37,7 @@ import 'package:data_learns_247/features/certificate/cubit/certificate_cubit.dar
 import 'package:data_learns_247/features/greeting/cubit/greeting_cubit.dart';
 import 'package:data_learns_247/features/request_training/cubit/request_training_detail_cubit.dart';
 import 'package:data_learns_247/features/request_training/cubit/request_training_list_cubit.dart';
+import 'package:data_learns_247/features/notification/cubit/notification_cubit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -99,7 +100,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => CertificateCubit()),
         BlocProvider(create: (context) => GreetingCubit()),
         BlocProvider(create: (context) => RequestTrainingListCubit()),
-        BlocProvider(create: (context) => RequestTrainingDetailCubit())
+        BlocProvider(create: (context) => RequestTrainingDetailCubit()),
+        BlocProvider(create: (context) => NotificationCubit())
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

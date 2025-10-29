@@ -10,16 +10,12 @@ class GetRandomArticle {
 
   Future<RandomArticle?> call() async {
     try {
-      // Ambil daftar artikel
       List<ListArticles>? articles = await _articleRepository.getListArticles();
 
       if (articles != null && articles.isNotEmpty) {
-        // Pilih artikel secara acak
         Random random = Random();
         int randomIndex = random.nextInt(articles.length);
         ListArticles selectedArticle = articles[randomIndex];
-
-        // Mapping artikel yang dipilih ke dalam RandomArticle
         return RandomArticle(
           blockGroup: selectedArticle.blockGroup.toString(),
           title: selectedArticle.title.toString(),

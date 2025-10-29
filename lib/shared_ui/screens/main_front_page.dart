@@ -1,3 +1,5 @@
+import 'package:data_learns_247/features/notification/data/models/notification_model.dart';
+import 'package:data_learns_247/features/notification/ui/screens/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,6 +42,7 @@ class _MainFrontPageState extends State<MainFrontPage> {
               if (selectedTabIndex == 1) activeTab = const ListCoursesScreen();
               if (selectedTabIndex == 2) activeTab = const MyCoursesListScreen();
               if (selectedTabIndex == 3) activeTab = const ProfileScreen();
+              if (selectedTabIndex == 4) activeTab = const NotificationScreen();
 
               return activeTab;
             },
@@ -78,6 +81,12 @@ class _MainFrontPageState extends State<MainFrontPage> {
                   ? const Icon(Icons.person)
                   : const Icon(Icons.person_outline),
                 label: 'Profile',
+              ),
+              BottomNavigationBarItem(
+                icon: context.read<PageCubit>().state == 4
+                  ? const Icon(Icons.notifications_active)
+                  : const Icon(Icons.notifications_active_outlined),
+                label: 'Notification',
               ),
             ],
           ),

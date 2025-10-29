@@ -1,19 +1,13 @@
-import 'package:data_learns_247/core/route/route_constant.dart';
 import 'package:data_learns_247/core/theme/color.dart';
-import 'package:data_learns_247/features/article/cubit/list_articles_cubit.dart';
 import 'package:data_learns_247/features/article/cubit/random_article_cubit.dart';
-import 'package:data_learns_247/features/article/ui/widgets/item/simple_article_item.dart';
 import 'package:data_learns_247/features/article/ui/widgets/placeholder/simple_article_item_placeholder.dart';
 import 'package:data_learns_247/features/authentication/cubit/user_cubit.dart';
 import 'package:data_learns_247/features/greeting/cubit/greeting_cubit.dart';
-import 'package:data_learns_247/core/helper/greeting_helper.dart';
-import 'package:data_learns_247/shared_ui/widgets/search_button.dart';
+import 'package:data_learns_247/core/utils/greeting_helper.dart';
 import 'package:data_learns_247/shared_ui/widgets/shimmer_sized_box.dart';
-import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class GreetingWidget extends StatefulWidget {
   const GreetingWidget({super.key});
@@ -85,11 +79,6 @@ class _GreetingWidgetState extends State<GreetingWidget> {
                                     }
                                   )
                                 ),
-                              ),
-                              const SizedBox(width: 18),
-                              const Expanded(
-                                flex: 2,
-                                child: SearchButton(tabIndex: 0),
                               ),
                             ],
                           ),

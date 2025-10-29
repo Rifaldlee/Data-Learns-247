@@ -47,6 +47,4 @@ extension GreetingHelper on Greeting {
         return null;
     }
   }
-
-
 }
